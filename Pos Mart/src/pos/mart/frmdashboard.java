@@ -132,10 +132,13 @@ public class frmdashboard extends javax.swing.JFrame {
     }//GEN-LAST:event_btncompanyMouseExited
 
     private void btncompanyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btncompanyActionPerformed
+    frmcompany company=new frmcompany();
+    company.setVisible(true);
     }//GEN-LAST:event_btncompanyActionPerformed
 
     private void btninventoryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btninventoryActionPerformed
-
+       frminventory inventory=new frminventory();
+       inventory.setVisible(true);
     }//GEN-LAST:event_btninventoryActionPerformed
     
     /**
