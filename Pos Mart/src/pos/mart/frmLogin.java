@@ -5,7 +5,14 @@
  */
 package pos.mart;
 
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.Socket;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
@@ -14,14 +21,36 @@ import javax.swing.JLabel;
  * @author Obaid
  */
 public class frmLogin extends javax.swing.JFrame {
-
+ Socket clientSocket;
+ private String Data;
     /**
      * Creates new form frmLogin
      */
     public frmLogin() {
         initComponents();
     }
-    
+   public String Connection(String data) throws IOException{
+    String modifiedSentence;
+        
+        clientSocket = new Socket("localhost", 6789);
+        
+        DataOutputStream outToServer =
+                new DataOutputStream(clientSocket.getOutputStream());
+        
+        BufferedReader inFromServer =  new BufferedReader(new
+                InputStreamReader(clientSocket.getInputStream()));
+        
+        outToServer.writeBytes(data + '\n');
+        
+        modifiedSentence = inFromServer.readLine();
+        
+        System.out.println("FROM SERVER: " + modifiedSentence);
+        
+
+        
+        return modifiedSentence;
+}
+
     void clearFields(){
         txtusername.setText("");
         txtpassword.setText("");
@@ -54,12 +83,13 @@ public class frmLogin extends javax.swing.JFrame {
         jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         jLabel1.setText("LOGIN");
 
-        txtusername.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
-
-        txtpassword.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
+        txtusername.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtusernameActionPerformed(evt);
+            }
+        });
 
         btnlogin.setBackground(new java.awt.Color(0, 0, 0));
-        btnlogin.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
         btnlogin.setForeground(new java.awt.Color(255, 255, 255));
         btnlogin.setText("Login");
         btnlogin.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 2));
@@ -72,7 +102,6 @@ public class frmLogin extends javax.swing.JFrame {
         });
 
         btnreset.setBackground(new java.awt.Color(0, 0, 0));
-        btnreset.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
         btnreset.setForeground(new java.awt.Color(255, 255, 255));
         btnreset.setText("Reset");
         btnreset.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 2));
@@ -150,10 +179,30 @@ public class frmLogin extends javax.swing.JFrame {
     }//GEN-LAST:event_btnresetActionPerformed
 
     private void btnloginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnloginActionPerformed
-        frmdashboard go=new frmdashboard();
+
+         try {
+      
+
+         String username=txtusername.getText().toString();
+         String password=new String(txtpassword.getPassword());
+         
+        String Data=("login,").concat(username).concat(",").concat(password); 
+        String returnData=Connection(Data);
+        if(returnData.equals("valid")){
+             frmdashboard go=new frmdashboard();
         go.setVisible(true);
         this.setVisible(false);
+System.out.println("valid user");
+        }
+         clientSocket.close();
+     } catch (IOException ex) {
+         Logger.getLogger(frmLogin.class.getName()).log(Level.SEVERE, null, ex);
+     }
     }//GEN-LAST:event_btnloginActionPerformed
+
+    private void txtusernameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtusernameActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtusernameActionPerformed
 
     /**
      * @param args the command line arguments
