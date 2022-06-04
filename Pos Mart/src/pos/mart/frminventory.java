@@ -26,6 +26,7 @@ public class frminventory extends javax.swing.JFrame {
         tblinventory.getTableHeader().getColumnModel().getColumn(0).setHeaderRenderer(MyHeaderRender);
         tblinventory.getTableHeader().getColumnModel().getColumn(1).setHeaderRenderer(MyHeaderRender);
         txtbarcode.requestFocus();
+        
     }
 
     /**

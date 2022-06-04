@@ -7,16 +7,55 @@ package pos.mart;
 
 import java.awt.Color;
 import javax.swing.table.DefaultTableCellRenderer;
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.Socket;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 
 /**
  *
  * @author Obaid
  */
 public class frmcompany extends javax.swing.JFrame {
+    
+                Socket clientSocket;
 
+
+//    frmLogin myObj=new frmLogin();
     /**
      * Creates new form frmcompany
      */
+    
+       public String Connection(String data) throws IOException{
+    String modifiedSentence;
+        
+        clientSocket = new Socket("localhost", 9999);
+        
+        DataOutputStream outToServer =
+                new DataOutputStream(clientSocket.getOutputStream());
+        
+        BufferedReader inFromServer =  new BufferedReader(new
+                InputStreamReader(clientSocket.getInputStream()));
+        
+//        outToServer.writeBytes("connected\n");  
+        
+        outToServer.writeBytes(data + '\n');
+
+        
+//        modifiedSentence = inFromServer.readLine();
+        
+//        System.out.println("FROM SERVER: " + modifiedSentence);
+        
+
+        
+//        return modifiedSentence;
+return "ok";
+}
+    
     public frmcompany() {
         initComponents();
         this.getContentPane().setBackground(Color.white);
@@ -27,6 +66,10 @@ public class frmcompany extends javax.swing.JFrame {
         tblcompany.getTableHeader().getColumnModel().getColumn(1).setHeaderRenderer(MyHeaderRender);
         tblcompany.getTableHeader().getColumnModel().getColumn(2).setHeaderRenderer(MyHeaderRender);
         txtname.requestFocus();
+        btnAdd.setBackground(Color.white);
+        btnupdate.setBackground(Color.white);
+        btndelete.setBackground(Color.white);
+        btnreset.setBackground(Color.white);
     }
 
     /**
@@ -69,7 +112,7 @@ public class frmcompany extends javax.swing.JFrame {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 679, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -98,7 +141,6 @@ public class frmcompany extends javax.swing.JFrame {
 
         getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(281, 112, 388, 324));
 
-        btnupdate.setBackground(new java.awt.Color(255, 255, 255));
         btnupdate.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
         btnupdate.setText("UPDATE");
         btnupdate.setContentAreaFilled(false);
@@ -118,7 +160,6 @@ public class frmcompany extends javax.swing.JFrame {
         });
         getContentPane().add(btnupdate, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 450, 169, 53));
 
-        btndelete.setBackground(new java.awt.Color(255, 255, 255));
         btndelete.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
         btndelete.setText("DELETE");
         btndelete.setContentAreaFilled(false);
@@ -133,7 +174,6 @@ public class frmcompany extends javax.swing.JFrame {
         });
         getContentPane().add(btndelete, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 450, 169, 53));
 
-        btnreset.setBackground(new java.awt.Color(255, 255, 255));
         btnreset.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
         btnreset.setText("RESET");
         btnreset.setContentAreaFilled(false);
@@ -148,7 +188,6 @@ public class frmcompany extends javax.swing.JFrame {
         });
         getContentPane().add(btnreset, new org.netbeans.lib.awtextra.AbsoluteConstraints(510, 450, 169, 53));
 
-        btnAdd.setBackground(new java.awt.Color(255, 255, 255));
         btnAdd.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
         btnAdd.setText("ADD");
         btnAdd.setContentAreaFilled(false);
@@ -168,7 +207,6 @@ public class frmcompany extends javax.swing.JFrame {
         });
         getContentPane().add(btnAdd, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 450, 169, 53));
 
-        txtsearch.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
         txtsearch.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtsearchActionPerformed(evt);
@@ -176,12 +214,10 @@ public class frmcompany extends javax.swing.JFrame {
         });
         getContentPane().add(txtsearch, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 80, 190, 25));
 
-        jLabel2.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel2.setText("Search");
         getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 80, 50, 25));
 
-        txtno.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
         txtno.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtnoActionPerformed(evt);
@@ -189,12 +225,10 @@ public class frmcompany extends javax.swing.JFrame {
         });
         getContentPane().add(txtno, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 200, 190, 25));
 
-        jLabel3.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel3.setText("Sr no");
         getContentPane().add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 200, 50, 25));
 
-        txtname.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
         txtname.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtnameActionPerformed(evt);
@@ -202,17 +236,14 @@ public class frmcompany extends javax.swing.JFrame {
         });
         getContentPane().add(txtname, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 240, 190, 25));
 
-        jLabel4.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
         jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel4.setText("Name");
         getContentPane().add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 240, 50, 25));
 
-        jLabel5.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
         jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel5.setText("Short name");
         getContentPane().add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 280, 70, 25));
 
-        txtshortname.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
         txtshortname.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtshortnameActionPerformed(evt);
@@ -229,7 +260,7 @@ public class frmcompany extends javax.swing.JFrame {
     }//GEN-LAST:event_btnAddMouseEntered
 
     private void btnAddMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnAddMouseExited
-        btnAdd.setBackground(new Color(255,255,255));
+        btnAdd.setBackground(Color.white);
         btnAdd.setForeground(Color.black);
     }//GEN-LAST:event_btnAddMouseExited
 
@@ -238,7 +269,28 @@ public class frmcompany extends javax.swing.JFrame {
     }//GEN-LAST:event_btnupdateActionPerformed
 
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
-        // TODO add your handling code here:
+                    try {
+                        //       String query="insert into tbl_company (company_name,company_shortname)"
+//               + " values("+txtname.getText().toString()+","+txtshortname.getText().toString()+")";
+//      
+//String query="insert into test values("+87+",'sprite',"+"'spr')";
+//        System.out.println(query);
+//        try {
+//
+//            
+////            System.out.println(myObj.Connection(query));
+////    frmLogin myObj=new frmLogin();
+//
+////            myObj.Connection(query);
+//Connection(query);
+//        } catch (IOException ex) {
+//            Logger.getLogger(frmcompany.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+        
+String q="test,".concat("test2,").concat("test3");
+Connection(q);      } catch (IOException ex) {
+                        Logger.getLogger(frmcompany.class.getName()).log(Level.SEVERE, null, ex);
+                    }
     }//GEN-LAST:event_btnAddActionPerformed
 
     private void btnupdateMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnupdateMouseEntered

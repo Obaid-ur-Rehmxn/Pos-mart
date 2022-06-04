@@ -32,7 +32,7 @@ public class frmLogin extends javax.swing.JFrame {
    public String Connection(String data) throws IOException{
     String modifiedSentence;
         
-        clientSocket = new Socket("localhost", 6789);
+        clientSocket = new Socket("localhost", 9999);
         
         DataOutputStream outToServer =
                 new DataOutputStream(clientSocket.getOutputStream());
