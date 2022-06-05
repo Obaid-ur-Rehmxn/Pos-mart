@@ -6,15 +6,29 @@
 package pos.mart;
 
 import java.awt.Color;
+import java.awt.event.KeyEvent;
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import static java.lang.Integer.parseInt;
+import java.net.Socket;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
  * @author Obaid
  */
 public class frmexpense extends javax.swing.JFrame {
-
+    DefaultTableModel model;
+    Socket clientSocket;
     /**
      * Creates new form frmexpense
      */
@@ -30,6 +44,25 @@ public class frmexpense extends javax.swing.JFrame {
         tblexpense1.getTableHeader().getColumnModel().getColumn(1).setHeaderRenderer(MyHeaderRender);
         tblexpense2.getTableHeader().getColumnModel().getColumn(0).setHeaderRenderer(MyHeaderRender);
         tblexpense2.getTableHeader().getColumnModel().getColumn(1).setHeaderRenderer(MyHeaderRender);
+        model = (DefaultTableModel) tblexpense2.getModel();
+        DateFormat datefor = new SimpleDateFormat("YYYY-MM-dd");
+        Date date = new Date();
+        txtdate.setText(datefor.format(date));
+    }
+    
+    public String Connection(String data) throws IOException {
+
+        clientSocket = new Socket("localhost", 9999);
+
+        DataOutputStream outToServer
+                = new DataOutputStream(clientSocket.getOutputStream());
+
+        BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+
+        outToServer.writeBytes(data + '\n');
+
+        String s=inFromServer.readLine();
+        return s;    
     }
 
     /**
@@ -228,6 +261,11 @@ public class frmexpense extends javax.swing.JFrame {
                 txtamountActionPerformed(evt);
             }
         });
+        txtamount.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtamountKeyPressed(evt);
+            }
+        });
 
         txtdescription.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
         txtdescription.addActionListener(new java.awt.event.ActionListener() {
@@ -333,7 +371,18 @@ public class frmexpense extends javax.swing.JFrame {
     }//GEN-LAST:event_btnAddMouseExited
 
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
-        // TODO add your handling code here:
+       try {
+            String query = "insert/insert into tbl_expense1(expense_date) values ('" + txtdate.getText() + "')";
+            System.out.println(query);
+            Connection(query);
+            for(int i=0;i<tblexpense2.getRowCount();i++){
+            String query1 = "insert/insert into tbl_expense2(expense_description,expense_amount,expense_Fkid) values ('" + model.getValueAt(i, 0).toString() + "','" + model.getValueAt(i, 1).toString() + "',"+parseInt(txtno.getText())+")";    
+                System.out.println(query1);
+                Connection(query1);
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(frmcompany.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_btnAddActionPerformed
 
     private void btndeleteMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btndeleteMouseEntered
@@ -347,7 +396,16 @@ public class frmexpense extends javax.swing.JFrame {
     }//GEN-LAST:event_btndeleteMouseExited
 
     private void btndeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btndeleteActionPerformed
-        // TODO add your handling code here:
+       try {
+            String query = "delete/Delete from tbl_expense1 where expense_id="+parseInt(txtno.getText());
+            System.out.println(query);
+            Connection(query);
+            String query1 = "delete/Delete from tbl_expense2 where expense_Fkid="+parseInt(txtno.getText());    
+                System.out.println(query1);
+                Connection(query1);
+        } catch (IOException ex) {
+            Logger.getLogger(frmcompany.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_btndeleteActionPerformed
 
     private void btnresetMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnresetMouseEntered
@@ -375,11 +433,22 @@ public class frmexpense extends javax.swing.JFrame {
     }//GEN-LAST:event_btnupdateMouseExited
 
     private void btnupdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnupdateActionPerformed
-        // TODO add your handling code here:
+        try {
+            String query = "update/Update tbl_expense1 set expense_date='"+txtdate.getText()+"' where expense_id="+parseInt(txtno.getText());
+            System.out.println(query);
+            Connection(query);
+            for(int i=0;i<tblexpense2.getRowCount();i++){
+            String query1 = "update/update tbl_expense2 Set expense_description='" + model.getValueAt(i, 0).toString() + "',expense_amount='" + model.getValueAt(i, 1).toString() + "' where expense_Fkid="+parseInt(txtno.getText());    
+                System.out.println(query1);
+                Connection(query1);
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(frmcompany.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_btnupdateActionPerformed
 
     private void txtnoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtnoActionPerformed
-        // TODO add your handling code here:
+        
     }//GEN-LAST:event_txtnoActionPerformed
 
     private void txtdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtdateActionPerformed
@@ -397,6 +466,12 @@ public class frmexpense extends javax.swing.JFrame {
     private void txtttlamountActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtttlamountActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtttlamountActionPerformed
+
+    private void txtamountKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtamountKeyPressed
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+        model.insertRow(model.getRowCount(), new Object[]{txtdescription.getText(), txtamount.getText()});
+        }
+    }//GEN-LAST:event_txtamountKeyPressed
 
     /**
      * @param args the command line arguments
