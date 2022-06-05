@@ -9,6 +9,9 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseListener;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFrame;
 
 /**
@@ -137,8 +140,12 @@ public class frmdashboard extends javax.swing.JFrame {
     }//GEN-LAST:event_btncompanyActionPerformed
 
     private void btninventoryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btninventoryActionPerformed
-       frminventory inventory=new frminventory();
-       inventory.setVisible(true);
+        try {
+            frminventory inventory=new frminventory();
+            inventory.setVisible(true);
+        } catch (IOException ex) {
+            Logger.getLogger(frmdashboard.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_btninventoryActionPerformed
     
     /**

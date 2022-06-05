@@ -11,54 +11,41 @@ import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import static java.lang.Integer.parseInt;
 import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 
 /**
  *
  * @author Obaid
  */
 public class frmcompany extends javax.swing.JFrame {
-    
-                Socket clientSocket;
 
+    Socket clientSocket;
+    frmLogin f = new frmLogin();
 
-//    frmLogin myObj=new frmLogin();
     /**
      * Creates new form frmcompany
      */
-    
-       public String Connection(String data) throws IOException{
-    String modifiedSentence;
-        
+    public String Connection(String data) throws IOException {
+
         clientSocket = new Socket("localhost", 9999);
-        
-        DataOutputStream outToServer =
-                new DataOutputStream(clientSocket.getOutputStream());
-        
-        BufferedReader inFromServer =  new BufferedReader(new
-                InputStreamReader(clientSocket.getInputStream()));
-        
-//        outToServer.writeBytes("connected\n");  
-        
+
+        DataOutputStream outToServer
+                = new DataOutputStream(clientSocket.getOutputStream());
+
+        BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+
         outToServer.writeBytes(data + '\n');
 
-        
-//        modifiedSentence = inFromServer.readLine();
-        
-//        System.out.println("FROM SERVER: " + modifiedSentence);
-        
+        return "ok";
+    }
 
-        
-//        return modifiedSentence;
-return "ok";
-}
-    
     public frmcompany() {
         initComponents();
         this.getContentPane().setBackground(Color.white);
+        this.setResizable(false);
         DefaultTableCellRenderer MyHeaderRender = new DefaultTableCellRenderer();
         MyHeaderRender.setBackground(new Color(54, 33, 89));
         MyHeaderRender.setForeground(new Color(255, 255, 255));
@@ -172,6 +159,11 @@ return "ok";
                 btndeleteMouseExited(evt);
             }
         });
+        btndelete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btndeleteActionPerformed(evt);
+            }
+        });
         getContentPane().add(btndelete, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 450, 169, 53));
 
         btnreset.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
@@ -265,32 +257,23 @@ return "ok";
     }//GEN-LAST:event_btnAddMouseExited
 
     private void btnupdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnupdateActionPerformed
-        // TODO add your handling code here:
+        try {
+            int srno = parseInt(txtno.getText());
+            String query = "update tbl_company set company_name='" + txtname.getText() + "',company_shortname='" + txtshortname.getText() + "' where company_id=" + srno;
+            f.Connection(query);
+        } catch (IOException ex) {
+            Logger.getLogger(frmcompany.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_btnupdateActionPerformed
 
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
-                    try {
-                        //       String query="insert into tbl_company (company_name,company_shortname)"
-//               + " values("+txtname.getText().toString()+","+txtshortname.getText().toString()+")";
-//      
-//String query="insert into test values("+87+",'sprite',"+"'spr')";
-//        System.out.println(query);
-//        try {
-//
-//            
-////            System.out.println(myObj.Connection(query));
-////    frmLogin myObj=new frmLogin();
-//
-////            myObj.Connection(query);
-//Connection(query);
-//        } catch (IOException ex) {
-//            Logger.getLogger(frmcompany.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-        
-String q="test,".concat("test2,").concat("test3");
-Connection(q);      } catch (IOException ex) {
-                        Logger.getLogger(frmcompany.class.getName()).log(Level.SEVERE, null, ex);
-                    }
+
+        try {
+            String query = "insert into tbl_company (company_name,company_shortname) values ('" + txtname.getText() + "','" + txtshortname.getText() + "')";
+            f.Connection(query);
+        } catch (IOException ex) {
+            Logger.getLogger(frmcompany.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_btnAddActionPerformed
 
     private void btnupdateMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnupdateMouseEntered
@@ -299,7 +282,7 @@ Connection(q);      } catch (IOException ex) {
     }//GEN-LAST:event_btnupdateMouseEntered
 
     private void btnupdateMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnupdateMouseExited
-        btnupdate.setBackground(new Color(255,255,255));
+        btnupdate.setBackground(new Color(255, 255, 255));
         btnupdate.setForeground(Color.black);
     }//GEN-LAST:event_btnupdateMouseExited
 
@@ -314,12 +297,12 @@ Connection(q);      } catch (IOException ex) {
     }//GEN-LAST:event_btndeleteMouseExited
 
     private void btnresetMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnresetMouseEntered
-         btnreset.setBackground(new Color(54, 33, 89));
+        btnreset.setBackground(new Color(54, 33, 89));
         btnreset.setForeground(Color.white);
     }//GEN-LAST:event_btnresetMouseEntered
 
     private void btnresetMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnresetMouseExited
-         btnreset.setBackground(Color.white);
+        btnreset.setBackground(Color.white);
         btnreset.setForeground(Color.black);
     }//GEN-LAST:event_btnresetMouseExited
 
@@ -338,6 +321,18 @@ Connection(q);      } catch (IOException ex) {
     private void txtshortnameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtshortnameActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtshortnameActionPerformed
+
+    private void btndeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btndeleteActionPerformed
+        try {
+            // TODO add your handling code here:
+            int srno = parseInt(txtno.getText());
+            String query = "delete from tbl_company where company_id=" + srno;
+            f.Connection(query);
+        } catch (IOException ex) {
+            Logger.getLogger(frmcompany.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }//GEN-LAST:event_btndeleteActionPerformed
 
     /**
      * @param args the command line arguments

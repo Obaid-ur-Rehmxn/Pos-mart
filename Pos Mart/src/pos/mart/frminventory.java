@@ -6,6 +6,14 @@
 package pos.mart;
 
 import java.awt.Color;
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import static java.lang.Integer.parseInt;
+import java.net.Socket;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.table.DefaultTableCellRenderer;
 
 /**
@@ -13,22 +21,59 @@ import javax.swing.table.DefaultTableCellRenderer;
  * @author Obaid
  */
 public class frminventory extends javax.swing.JFrame {
-
+    Socket clientSocket;
+    int company;
+//    frmLogin fr=new frmLogin();/
     /**
      * Creates new form frmcompany
      */
-    public frminventory() {
+    
+    public frminventory() throws IOException{
+        this.clientSocket = new Socket("localhost", 9999);
         initComponents();
         this.getContentPane().setBackground(Color.white);
+        this.setResizable(false);
         DefaultTableCellRenderer MyHeaderRender = new DefaultTableCellRenderer();
         MyHeaderRender.setBackground(new Color(54, 33, 89));
         MyHeaderRender.setForeground(new Color(255, 255, 255));
         tblinventory.getTableHeader().getColumnModel().getColumn(0).setHeaderRenderer(MyHeaderRender);
         tblinventory.getTableHeader().getColumnModel().getColumn(1).setHeaderRenderer(MyHeaderRender);
         txtbarcode.requestFocus();
+        btnAdd.setBackground(Color.white);
+        btnupdate.setBackground(Color.white);
+        btndelete.setBackground(Color.white);
+        btnreset.setBackground(Color.white);
         
     }
+public String Connection(String data) throws IOException {
 
+        
+
+        DataOutputStream outToServer
+                = new DataOutputStream(clientSocket.getOutputStream());
+
+        BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+
+        outToServer.writeBytes(data + '\n');
+        String s=inFromServer.readLine();
+        return s;
+    
+
+
+    }
+
+    void fkConnection(String data){
+        try {
+            DataOutputStream outToServer
+                    = new DataOutputStream(clientSocket.getOutputStream());
+            BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+            outToServer.writeBytes(data + '\n');
+            String s=inFromServer.readLine();
+            company=parseInt(s);
+        } catch (IOException ex) {
+            Logger.getLogger(frminventory.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -55,7 +100,7 @@ public class frminventory extends javax.swing.JFrame {
         jLabel5 = new javax.swing.JLabel();
         txtpurchaseprice = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
-        jComboBox1 = new javax.swing.JComboBox<>();
+        cmbcompany = new javax.swing.JComboBox<>();
         jLabel7 = new javax.swing.JLabel();
         txtbarcode = new javax.swing.JTextField();
         jLabel8 = new javax.swing.JLabel();
@@ -100,6 +145,7 @@ public class frminventory extends javax.swing.JFrame {
 
         getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 679, -1));
 
+        tblinventory.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
         tblinventory.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
@@ -120,7 +166,6 @@ public class frminventory extends javax.swing.JFrame {
 
         getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(329, 112, 340, 324));
 
-        btnupdate.setBackground(new java.awt.Color(255, 255, 255));
         btnupdate.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
         btnupdate.setText("UPDATE");
         btnupdate.setContentAreaFilled(false);
@@ -140,7 +185,6 @@ public class frminventory extends javax.swing.JFrame {
         });
         getContentPane().add(btnupdate, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 450, 169, 53));
 
-        btndelete.setBackground(new java.awt.Color(255, 255, 255));
         btndelete.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
         btndelete.setText("DELETE");
         btndelete.setContentAreaFilled(false);
@@ -153,9 +197,13 @@ public class frminventory extends javax.swing.JFrame {
                 btndeleteMouseExited(evt);
             }
         });
+        btndelete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btndeleteActionPerformed(evt);
+            }
+        });
         getContentPane().add(btndelete, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 450, 169, 53));
 
-        btnreset.setBackground(new java.awt.Color(255, 255, 255));
         btnreset.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
         btnreset.setText("RESET");
         btnreset.setContentAreaFilled(false);
@@ -170,7 +218,6 @@ public class frminventory extends javax.swing.JFrame {
         });
         getContentPane().add(btnreset, new org.netbeans.lib.awtextra.AbsoluteConstraints(510, 450, 169, 53));
 
-        btnAdd.setBackground(new java.awt.Color(255, 255, 255));
         btnAdd.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
         btnAdd.setText("ADD");
         btnAdd.setContentAreaFilled(false);
@@ -190,7 +237,7 @@ public class frminventory extends javax.swing.JFrame {
         });
         getContentPane().add(btnAdd, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 450, 169, 53));
 
-        txtsearch.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
+        txtsearch.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
         txtsearch.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtsearchActionPerformed(evt);
@@ -198,12 +245,11 @@ public class frminventory extends javax.swing.JFrame {
         });
         getContentPane().add(txtsearch, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 80, 190, 25));
 
-        jLabel2.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel2.setText("Search");
         getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 80, 50, 25));
 
-        txtno.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
+        txtno.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
         txtno.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtnoActionPerformed(evt);
@@ -211,12 +257,11 @@ public class frminventory extends javax.swing.JFrame {
         });
         getContentPane().add(txtno, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 100, 120, 25));
 
-        jLabel3.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel3.setText("Sr no");
         getContentPane().add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 100, 50, 25));
 
-        txtdescription.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
+        txtdescription.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
         txtdescription.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtdescriptionActionPerformed(evt);
@@ -224,17 +269,15 @@ public class frminventory extends javax.swing.JFrame {
         });
         getContentPane().add(txtdescription, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 240, 210, 25));
 
-        jLabel4.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
         jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel4.setText("Description");
-        getContentPane().add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 240, 60, 25));
+        getContentPane().add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 240, 60, 25));
 
-        jLabel5.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
         jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel5.setText("Code");
         getContentPane().add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 160, 50, 20));
 
-        txtpurchaseprice.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
+        txtpurchaseprice.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
         txtpurchaseprice.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtpurchasepriceActionPerformed(evt);
@@ -242,19 +285,24 @@ public class frminventory extends javax.swing.JFrame {
         });
         getContentPane().add(txtpurchaseprice, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 290, 100, 25));
 
-        jLabel6.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
         jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel6.setText("Purchase");
-        getContentPane().add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 270, 50, 25));
+        getContentPane().add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 270, 70, 25));
 
-        getContentPane().add(jComboBox1, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 130, 210, 25));
+        cmbcompany.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+        cmbcompany.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "abc", "other", "obaid" }));
+        cmbcompany.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmbcompanyActionPerformed(evt);
+            }
+        });
+        getContentPane().add(cmbcompany, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 130, 210, 25));
 
-        jLabel7.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
         jLabel7.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel7.setText("Barcode");
         getContentPane().add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 160, 70, 20));
 
-        txtbarcode.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
+        txtbarcode.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
         txtbarcode.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtbarcodeActionPerformed(evt);
@@ -262,12 +310,11 @@ public class frminventory extends javax.swing.JFrame {
         });
         getContentPane().add(txtbarcode, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 180, 120, 25));
 
-        jLabel8.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
         jLabel8.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel8.setText("Company");
         getContentPane().add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 130, 60, 25));
 
-        txtname.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
+        txtname.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
         txtname.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtnameActionPerformed(evt);
@@ -275,17 +322,15 @@ public class frminventory extends javax.swing.JFrame {
         });
         getContentPane().add(txtname, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 210, 210, 25));
 
-        jLabel9.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
         jLabel9.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel9.setText("STax %");
         getContentPane().add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 350, 50, 25));
 
-        jLabel10.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
         jLabel10.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel10.setText("Sales");
         getContentPane().add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 270, 50, 25));
 
-        txtcode.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
+        txtcode.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
         txtcode.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtcodeActionPerformed(evt);
@@ -293,7 +338,7 @@ public class frminventory extends javax.swing.JFrame {
         });
         getContentPane().add(txtcode, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 180, 120, 25));
 
-        txtsaletax.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
+        txtsaletax.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
         txtsaletax.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtsaletaxActionPerformed(evt);
@@ -301,7 +346,7 @@ public class frminventory extends javax.swing.JFrame {
         });
         getContentPane().add(txtsaletax, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 350, 100, 25));
 
-        txtsaledisc.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
+        txtsaledisc.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
         txtsaledisc.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtsalediscActionPerformed(evt);
@@ -309,7 +354,7 @@ public class frminventory extends javax.swing.JFrame {
         });
         getContentPane().add(txtsaledisc, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 320, 100, 25));
 
-        txtsaleprice3.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
+        txtsaleprice3.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
         txtsaleprice3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtsaleprice3ActionPerformed(evt);
@@ -317,7 +362,7 @@ public class frminventory extends javax.swing.JFrame {
         });
         getContentPane().add(txtsaleprice3, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 290, 100, 25));
 
-        txtpurchasetax.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
+        txtpurchasetax.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
         txtpurchasetax.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtpurchasetaxActionPerformed(evt);
@@ -325,7 +370,7 @@ public class frminventory extends javax.swing.JFrame {
         });
         getContentPane().add(txtpurchasetax, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 350, 100, 25));
 
-        txtpurchasedisc.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
+        txtpurchasedisc.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
         txtpurchasedisc.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtpurchasediscActionPerformed(evt);
@@ -333,27 +378,23 @@ public class frminventory extends javax.swing.JFrame {
         });
         getContentPane().add(txtpurchasedisc, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 320, 100, 25));
 
-        jLabel11.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
         jLabel11.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel11.setText("Name");
         getContentPane().add(jLabel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 210, 50, 25));
 
-        jLabel12.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
         jLabel12.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel12.setText("Price");
         getContentPane().add(jLabel12, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 290, 50, 25));
 
-        jLabel13.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
         jLabel13.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel13.setText("Disc %");
         getContentPane().add(jLabel13, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 320, 50, 25));
 
-        jLabel14.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
         jLabel14.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel14.setText("Quantity");
         getContentPane().add(jLabel14, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 380, 50, 20));
 
-        txtqty.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
+        txtqty.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
         txtqty.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtqtyActionPerformed(evt);
@@ -361,12 +402,11 @@ public class frminventory extends javax.swing.JFrame {
         });
         getContentPane().add(txtqty, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 400, 120, 25));
 
-        jLabel15.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
         jLabel15.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel15.setText("Min Stock level");
         getContentPane().add(jLabel15, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 380, 100, 20));
 
-        txtminstock.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
+        txtminstock.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
         txtminstock.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtminstockActionPerformed(evt);
@@ -374,7 +414,6 @@ public class frminventory extends javax.swing.JFrame {
         });
         getContentPane().add(txtminstock, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 400, 120, 25));
 
-        chkinactive.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
         chkinactive.setText("Inactive");
         getContentPane().add(chkinactive, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 100, -1, -1));
 
@@ -392,11 +431,49 @@ public class frminventory extends javax.swing.JFrame {
     }//GEN-LAST:event_btnAddMouseExited
 
     private void btnupdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnupdateActionPerformed
-        // TODO add your handling code here:
+        try {
+            var inactive=chkinactive.isSelected();
+            int inactive1;
+            if (inactive==true) {
+                inactive1=1;
+            }
+            else{
+                inactive1=0;
+            }
+            int srno=parseInt(txtno.getText());
+            String sql="update tbl_inventory set inventory_code = '"+txtcode.getText()+"',inventory_name = '"+txtname.getText()+
+                    "',invemtory_description = '"+txtdescription.getText()+
+                    "',inventory_barcode = "+parseInt(txtbarcode.getText())+",inventory_Fkcompany = "+company+",inventory_saleprice = "+parseInt(txtsaleprice3.getText())+",inventory_saledisc = "+parseInt(txtsaledisc.getText())+" "
+                    + ", inventory_saletax = "+parseInt(txtsaletax.getText())+" , inventory_purchaseprice = "+parseInt(txtpurchaseprice.getText())+
+                    " , inventory_purchasedisc = "+parseInt(txtpurchasetax.getText())+" , inventory_inactive = "+inactive1+" , inventory_quantity = "+parseInt(txtqty.getText())+" , inventory_minstock = "+parseInt(txtminstock.getText())+" where inventory_id = "+srno;
+            System.out.println(sql);
+            Connection(sql);
+        } catch (IOException ex) {
+            Logger.getLogger(frminventory.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_btnupdateActionPerformed
 
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
-        // TODO add your handling code here:
+        try {
+            System.out.println(company);
+            var inactive=chkinactive.isSelected();
+            int inactive1;
+            if (inactive==true) {
+                inactive1=1;
+            }
+            else{
+                inactive1=0;
+            }
+            String query = "insert into tbl_inventory(inventory_Fkcompany,inventory_code,inventory_name,inventory_barcode,invemtory_description,"
+                    + "inventory_saleprice,inventory_saledisc,inventory_saletax,inventory_purchaseprice,inventory_purchasedisc,inventory_purchasetax,"
+                    + "inventory_quantity,inventory_minstock,inventory_inactive) Values"
+                    + " (" + company + ",'" + txtcode.getText() + "','"+txtname.getText()+"',"+parseInt(txtbarcode.getText())
+                    +",'"+txtdescription.getText()+"',"+parseInt(txtsaleprice3.getText())+","+parseInt(txtsaledisc.getText())+","
+                    +parseInt(txtsaletax.getText())+","+parseInt(txtpurchaseprice.getText())+","+parseInt(txtpurchasedisc.getText())+","+parseInt(txtpurchasetax.getText())+","+parseInt(txtqty.getText())+","+parseInt(txtminstock.getText())+","+inactive1+")";
+            Connection(query);
+        } catch (IOException ex) {
+            Logger.getLogger(frmcompany.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_btnAddActionPerformed
 
     private void btnupdateMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnupdateMouseEntered
@@ -485,6 +562,27 @@ public class frminventory extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtminstockActionPerformed
 
+    private void cmbcompanyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbcompanyActionPerformed
+
+        String cmp_name=cmbcompany.getSelectedItem().toString();
+        System.out.println(cmp_name);
+        String sql="Select company_id from tbl_company where company_name='"+cmp_name+"'";
+        System.out.println(sql);
+        fkConnection(sql);
+    }//GEN-LAST:event_cmbcompanyActionPerformed
+
+    private void btndeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btndeleteActionPerformed
+        // TODO add your handling code here:
+         try {
+            // TODO add your handling code here:
+            int srno = parseInt(txtno.getText());
+            String query = "delete from tbl_inventory where inventory_id=" + srno;
+            Connection(query);
+        } catch (IOException ex) {
+            Logger.getLogger(frmcompany.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_btndeleteActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -516,7 +614,11 @@ public class frminventory extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new frminventory().setVisible(true);
+                try {
+                    new frminventory().setVisible(true);
+                } catch (IOException ex) {
+                    Logger.getLogger(frminventory.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
     }
@@ -527,7 +629,7 @@ public class frminventory extends javax.swing.JFrame {
     private javax.swing.JButton btnreset;
     private javax.swing.JButton btnupdate;
     private javax.swing.JCheckBox chkinactive;
-    private javax.swing.JComboBox<String> jComboBox1;
+    private javax.swing.JComboBox<String> cmbcompany;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
