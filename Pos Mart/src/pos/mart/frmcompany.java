@@ -259,7 +259,7 @@ public class frmcompany extends javax.swing.JFrame {
     private void btnupdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnupdateActionPerformed
         try {
             int srno = parseInt(txtno.getText());
-            String query = "update tbl_company set company_name='" + txtname.getText() + "',company_shortname='" + txtshortname.getText() + "' where company_id=" + srno;
+            String query = "update/update tbl_company set company_name='" + txtname.getText() + "',company_shortname='" + txtshortname.getText() + "' where company_id=" + srno;
             f.Connection(query);
         } catch (IOException ex) {
             Logger.getLogger(frmcompany.class.getName()).log(Level.SEVERE, null, ex);
@@ -269,7 +269,7 @@ public class frmcompany extends javax.swing.JFrame {
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
 
         try {
-            String query = "insert into tbl_company (company_name,company_shortname) values ('" + txtname.getText() + "','" + txtshortname.getText() + "')";
+            String query = "insert/insert into tbl_company (company_name,company_shortname) values ('" + txtname.getText() + "','" + txtshortname.getText() + "')";
             f.Connection(query);
         } catch (IOException ex) {
             Logger.getLogger(frmcompany.class.getName()).log(Level.SEVERE, null, ex);
@@ -326,7 +326,7 @@ public class frmcompany extends javax.swing.JFrame {
         try {
             // TODO add your handling code here:
             int srno = parseInt(txtno.getText());
-            String query = "delete from tbl_company where company_id=" + srno;
+            String query = "delete/delete from tbl_company where company_id=" + srno;
             f.Connection(query);
         } catch (IOException ex) {
             Logger.getLogger(frmcompany.class.getName()).log(Level.SEVERE, null, ex);

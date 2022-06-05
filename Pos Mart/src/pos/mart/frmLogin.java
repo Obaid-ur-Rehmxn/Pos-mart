@@ -186,7 +186,7 @@ public class frmLogin extends javax.swing.JFrame {
          String username=txtusername.getText().toString();
          String password=new String(txtpassword.getPassword());
          
-        String Data=("login,").concat(username).concat(",").concat(password); 
+        String Data=("login/").concat(username).concat("/").concat(password); 
         String returnData=Connection(Data);
         if(returnData.equals("valid")){
              frmdashboard go=new frmdashboard();

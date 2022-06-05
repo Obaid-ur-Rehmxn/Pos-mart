@@ -21,7 +21,6 @@ import javax.swing.table.DefaultTableCellRenderer;
  * @author Obaid
  */
 public class frminventory extends javax.swing.JFrame {
-    Socket clientSocket;
     int company;
 //    frmLogin fr=new frmLogin();/
     /**
@@ -29,7 +28,6 @@ public class frminventory extends javax.swing.JFrame {
      */
     
     public frminventory() throws IOException{
-        this.clientSocket = new Socket("localhost", 9999);
         initComponents();
         this.getContentPane().setBackground(Color.white);
         this.setResizable(false);
@@ -45,34 +43,37 @@ public class frminventory extends javax.swing.JFrame {
         btnreset.setBackground(Color.white);
         
     }
-public String Connection(String data) throws IOException {
+//public String Connection(String data) throws IOException {
+//        DataOutputStream outToServer
+//                = new DataOutputStream(clientSocket.getOutputStream());
+//
+//        BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+//
+//        outToServer.writeBytes(data + '\n');
+//        String s=inFromServer.readLine();
+//        return s;
+//
+//    }
 
-        
-
-        DataOutputStream outToServer
-                = new DataOutputStream(clientSocket.getOutputStream());
-
-        BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-
-        outToServer.writeBytes(data + '\n');
-        String s=inFromServer.readLine();
-        return s;
-    
-
-
-    }
-
-    void fkConnection(String data){
+    String fkConnection(String data){
+        String s = null;
         try {
+            Socket clientSocket = new Socket("localhost", 9999);
             DataOutputStream outToServer
                     = new DataOutputStream(clientSocket.getOutputStream());
             BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             outToServer.writeBytes(data + '\n');
-            String s=inFromServer.readLine();
-            company=parseInt(s);
+            s=inFromServer.readLine();
+            if(s.equalsIgnoreCase("true") || s.equalsIgnoreCase("false")){
+                System.out.println(s);
+            }
+            else{
+                company=parseInt(s);
+            }
         } catch (IOException ex) {
             Logger.getLogger(frminventory.class.getName()).log(Level.SEVERE, null, ex);
         }
+        return s;
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -290,7 +291,7 @@ public String Connection(String data) throws IOException {
         getContentPane().add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 270, 70, 25));
 
         cmbcompany.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
-        cmbcompany.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "abc", "other", "obaid" }));
+        cmbcompany.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "nabeel", "other", "jamal" }));
         cmbcompany.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cmbcompanyActionPerformed(evt);
@@ -431,49 +432,42 @@ public String Connection(String data) throws IOException {
     }//GEN-LAST:event_btnAddMouseExited
 
     private void btnupdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnupdateActionPerformed
-        try {
-            var inactive=chkinactive.isSelected();
-            int inactive1;
-            if (inactive==true) {
-                inactive1=1;
-            }
-            else{
-                inactive1=0;
-            }
-            int srno=parseInt(txtno.getText());
-            String sql="update tbl_inventory set inventory_code = '"+txtcode.getText()+"',inventory_name = '"+txtname.getText()+
-                    "',invemtory_description = '"+txtdescription.getText()+
-                    "',inventory_barcode = "+parseInt(txtbarcode.getText())+",inventory_Fkcompany = "+company+",inventory_saleprice = "+parseInt(txtsaleprice3.getText())+",inventory_saledisc = "+parseInt(txtsaledisc.getText())+" "
-                    + ", inventory_saletax = "+parseInt(txtsaletax.getText())+" , inventory_purchaseprice = "+parseInt(txtpurchaseprice.getText())+
-                    " , inventory_purchasedisc = "+parseInt(txtpurchasetax.getText())+" , inventory_inactive = "+inactive1+" , inventory_quantity = "+parseInt(txtqty.getText())+" , inventory_minstock = "+parseInt(txtminstock.getText())+" where inventory_id = "+srno;
-            System.out.println(sql);
-            Connection(sql);
-        } catch (IOException ex) {
-            Logger.getLogger(frminventory.class.getName()).log(Level.SEVERE, null, ex);
+        var inactive=chkinactive.isSelected();
+        int inactive1;
+        if (inactive==true) {
+            inactive1=1;
         }
+        else{
+            inactive1=0;
+        }
+        int srno=parseInt(txtno.getText());
+        String sql="update/update tbl_inventory set inventory_code = '"+txtcode.getText()+"',inventory_name = '"+txtname.getText()+
+                "',invemtory_description = '"+txtdescription.getText()+
+                "',inventory_barcode = "+parseInt(txtbarcode.getText())+",inventory_Fkcompany = "+company+",inventory_saleprice = "+parseInt(txtsaleprice3.getText())+",inventory_saledisc = "+parseInt(txtsaledisc.getText())+" "
+                + ", inventory_saletax = "+parseInt(txtsaletax.getText())+" , inventory_purchaseprice = "+parseInt(txtpurchaseprice.getText())+
+                " , inventory_purchasedisc = "+parseInt(txtpurchasedisc.getText())+" ,inventory_purchasetax = "+parseInt(txtpurchasetax.getText())+" , inventory_inactive = "+inactive1+" , inventory_quantity = "+parseInt(txtqty.getText())+" , inventory_minstock = "+parseInt(txtminstock.getText())+" where inventory_id = "+srno;
+        System.out.println(sql);
+        fkConnection(sql);
     }//GEN-LAST:event_btnupdateActionPerformed
 
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
-        try {
-            System.out.println(company);
-            var inactive=chkinactive.isSelected();
-            int inactive1;
-            if (inactive==true) {
-                inactive1=1;
-            }
-            else{
-                inactive1=0;
-            }
-            String query = "insert into tbl_inventory(inventory_Fkcompany,inventory_code,inventory_name,inventory_barcode,invemtory_description,"
-                    + "inventory_saleprice,inventory_saledisc,inventory_saletax,inventory_purchaseprice,inventory_purchasedisc,inventory_purchasetax,"
-                    + "inventory_quantity,inventory_minstock,inventory_inactive) Values"
-                    + " (" + company + ",'" + txtcode.getText() + "','"+txtname.getText()+"',"+parseInt(txtbarcode.getText())
-                    +",'"+txtdescription.getText()+"',"+parseInt(txtsaleprice3.getText())+","+parseInt(txtsaledisc.getText())+","
-                    +parseInt(txtsaletax.getText())+","+parseInt(txtpurchaseprice.getText())+","+parseInt(txtpurchasedisc.getText())+","+parseInt(txtpurchasetax.getText())+","+parseInt(txtqty.getText())+","+parseInt(txtminstock.getText())+","+inactive1+")";
-            Connection(query);
-        } catch (IOException ex) {
-            Logger.getLogger(frmcompany.class.getName()).log(Level.SEVERE, null, ex);
+        System.out.println(company);
+        var inactive=chkinactive.isSelected();
+        int inactive1;
+        if (inactive==true) {
+            inactive1=1;
         }
+        else{
+            inactive1=0;
+        }
+        String query = "insert/insert into tbl_inventory(inventory_Fkcompany,inventory_code,inventory_name,inventory_barcode,invemtory_description,"
+                + "inventory_saleprice,inventory_saledisc,inventory_saletax,inventory_purchaseprice,inventory_purchasedisc,inventory_purchasetax,"
+                + "inventory_quantity,inventory_minstock,inventory_inactive) Values"
+                + " (" + company + ",'" + txtcode.getText() + "','"+txtname.getText()+"',"+parseInt(txtbarcode.getText())
+                +",'"+txtdescription.getText()+"',"+parseInt(txtsaleprice3.getText())+","+parseInt(txtsaledisc.getText())+","
+                +parseInt(txtsaletax.getText())+","+parseInt(txtpurchaseprice.getText())+","+parseInt(txtpurchasedisc.getText())+","+parseInt(txtpurchasetax.getText())+","+parseInt(txtqty.getText())+","+parseInt(txtminstock.getText())+","+inactive1+")";
+        System.out.println(query);
+        fkConnection(query);
     }//GEN-LAST:event_btnAddActionPerformed
 
     private void btnupdateMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnupdateMouseEntered
@@ -566,21 +560,17 @@ public String Connection(String data) throws IOException {
 
         String cmp_name=cmbcompany.getSelectedItem().toString();
         System.out.println(cmp_name);
-        String sql="Select company_id from tbl_company where company_name='"+cmp_name+"'";
+        String sql="fkcompany/Select company_id from tbl_company where company_name='"+cmp_name+"'";
         System.out.println(sql);
         fkConnection(sql);
     }//GEN-LAST:event_cmbcompanyActionPerformed
 
     private void btndeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btndeleteActionPerformed
         // TODO add your handling code here:
-         try {
-            // TODO add your handling code here:
-            int srno = parseInt(txtno.getText());
-            String query = "delete from tbl_inventory where inventory_id=" + srno;
-            Connection(query);
-        } catch (IOException ex) {
-            Logger.getLogger(frmcompany.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        int srno = parseInt(txtno.getText());
+        String query = "delete/delete from tbl_inventory where inventory_id=" + srno;
+        System.out.println(query);
+        fkConnection(query);
     }//GEN-LAST:event_btndeleteActionPerformed
 
     /**

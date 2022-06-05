@@ -39,48 +39,28 @@ public class server {
         String clientdata = "";
         String status = "";
         ServerSocket welcomeSocket = new ServerSocket(9999);
-
-        System.out.println("k1");
-
         while (true) {
             Socket connectionSocket = welcomeSocket.accept();
             BufferedReader inFromClient = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
-            System.out.println("k2");
-
             DataOutputStream outToClient
                     = new DataOutputStream(connectionSocket.getOutputStream());
-
             clientdata = inFromClient.readLine();
-            String s=clientdata.toLowerCase();
-            System.out.println("k3");
-            String data[] = clientdata.split(",");
-            System.out.println("k4");
-
-                 if(data[0].equals("login"))
+            System.out.println(clientdata);
+            String data[] = clientdata.split("/");
+                 if(data[0].equalsIgnoreCase("login"))
                  {
                     System.out.println("k5");
                      String username=data[1];
                      String userpass=data[2];           
                      status=login_validation(username,userpass);
-                }
-                 
-                 else if(s.startsWith("insert")||s.startsWith("update")||s.startsWith("delete")){
-            System.out.println("k6");
-           
-            Connection con = DriverManager.getConnection(ConnectionClass.conString);
-            System.out.println("pta nii2");        
-            PreparedStatement pst = con.prepareStatement(clientdata);
-            System.out.println("pta nii3");
-            boolean abc = pst.execute();
-            System.out.println(abc);
-            con.close();
+                     outToClient.writeBytes(status + '\n');
                  }
-                 else if(s.startsWith("select")){
+                 else if(data[0].equalsIgnoreCase("fkcompany")){
                  int a=0;
+                 String qwe=data[1];
                      Connection con = DriverManager.getConnection(ConnectionClass.conString);
-                     PreparedStatement pst = con.prepareStatement(clientdata);
+                     PreparedStatement pst = con.prepareStatement(qwe);
                      ResultSet rs=pst.executeQuery();
-            
                     while(rs.next()){
                     a=rs.getInt(1);
                     System.out.println(a);
@@ -89,44 +69,17 @@ public class server {
                 con.close();
                 outToClient.writeBytes(b+'\n');
                  }
-            System.out.println("k7");
-             outToClient.writeBytes(status + '\n');
-            System.out.println("k8");             
+                 else if(data[0].equalsIgnoreCase("insert") || data[0].equalsIgnoreCase("update") || data[0].equalsIgnoreCase("delete")){
+            String qwe=data[1];
+            Connection con = DriverManager.getConnection(ConnectionClass.conString);
+            PreparedStatement pst = con.prepareStatement(qwe);
+            boolean abc = pst.execute();
+            System.out.println(abc);
+            con.close();
+                 }          
         }
-//     welcomeSocket.close();
-
     }
     
-    
-    
-
-//    public String basicSqlFunctions(String s1, String s2, String s3) throws SQLException, Exception {
-//        System.out.println("ghjg");
-////    Statement st=(Statement) con.prepareStatement(query);
-//        try {
-//            System.out.println("pta nii");
-//            Connection con = DriverManager.getConnection(ConnectionClass.conString);
-//            System.out.println("pta nii2");
-//            String sql = "insert into test2 values (?,?,?)";
-//            //    Statement st=(Statement) con.prepareStatement(query);
-//            PreparedStatement pst = con.prepareStatement(sql);
-//            pst.setString(1, s1);
-//            pst.setString(2, s2);
-//            pst.setString(3, s3);
-//            pst.executeUpdate();
-//            System.out.println("pta nii3");
-//
-////        ResultSet rs=st.executeQuery();
-//            System.out.println("pta nii4");
-//            con.close();
-//            System.out.println("pta nii5");
-//        } catch (Exception e) {
-//            System.out.println("ni chl raha boss");
-//        }
-//
-//        return "sabr kr bhai";
-//    }
-
     public String login_validation(String username, String userpass) throws SQLException {
         String status = "invalid";
         Connection con = DriverManager.getConnection(ConnectionClass.conString);
