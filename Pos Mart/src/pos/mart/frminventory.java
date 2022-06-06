@@ -8,26 +8,31 @@ package pos.mart;
 import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
+import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import static java.lang.Integer.parseInt;
 import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
  * @author Obaid
  */
 public class frminventory extends javax.swing.JFrame {
+
     int company;
 //    frmLogin fr=new frmLogin();/
+
     /**
      * Creates new form frmcompany
      */
-    
-    public frminventory() throws IOException{
+    public frminventory() throws IOException {
         initComponents();
         this.getContentPane().setBackground(Color.white);
         this.setResizable(false);
@@ -41,10 +46,10 @@ public class frminventory extends javax.swing.JFrame {
         btnupdate.setBackground(Color.white);
         btndelete.setBackground(Color.white);
         btnreset.setBackground(Color.white);
-        
+        clearFields();
     }
 
-    String fkConnection(String data){
+    String fkConnection(String data) {
         String s = null;
         try {
             Socket clientSocket = new Socket("localhost", 9999);
@@ -52,18 +57,66 @@ public class frminventory extends javax.swing.JFrame {
                     = new DataOutputStream(clientSocket.getOutputStream());
             BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             outToServer.writeBytes(data + '\n');
-            s=inFromServer.readLine();
-            if(s.equalsIgnoreCase("true") || s.equalsIgnoreCase("false")){
+            s = inFromServer.readLine();
+            if (s.equalsIgnoreCase("true") || s.equalsIgnoreCase("false") || s.startsWith("filecreated")) {
                 System.out.println(s);
-            }
-            else{
-                company=parseInt(s);
+            } else {
+                company = parseInt(s);
             }
         } catch (IOException ex) {
             Logger.getLogger(frminventory.class.getName()).log(Level.SEVERE, null, ex);
         }
         return s;
     }
+
+    void showData() {
+        try {
+            fkConnection("tbl_inventory1");
+            System.out.println("connection performed");
+            byte[] b = new byte[2002];
+            Socket sr = new Socket("localhost", 9999);
+            InputStream is = sr.getInputStream();
+            FileOutputStream fr = new FileOutputStream("tbl_inventory1.txt");
+            is.read(b, 0, b.length);
+            fr.write(b, 0, b.length);
+            is.close();
+            fr.close();
+            sr.close();
+            BufferedReader br = new BufferedReader(new FileReader("tbl_inventory1.txt"));
+            DefaultTableModel model = (DefaultTableModel) tblinventory.getModel();
+            Object[] tableLines = br.lines().toArray();
+            for (int i = model.getRowCount() - 1; i >= 0; i--) {
+                model.removeRow(i);
+            }
+            for (int i = 0; i < tableLines.length - 1; i++) {
+                String line = tableLines[i].toString().trim();
+                String[] dataRow = line.split(",");
+                model.addRow(dataRow);
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(frmcompany.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    void clearFields() {
+        txtbarcode.setText("");
+        txtname.setText("");
+        txtdescription.setText("");
+        txtcode.setText("");
+        txtminstock.setText("");
+        txtpurchasedisc.setText("");
+        txtpurchaseprice.setText("");
+        txtpurchasetax.setText("");
+        txtsaledisc.setText("");
+        txtsaleprice3.setText("");
+        txtsaletax.setText("");
+        txtqty.setText("");
+        txtsearch.setText("");
+        chkinactive.setSelected(false);
+        cmbcompany.setSelectedIndex(0);
+        txtbarcode.requestFocus();
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -111,6 +164,7 @@ public class frminventory extends javax.swing.JFrame {
         jLabel15 = new javax.swing.JLabel();
         txtminstock = new javax.swing.JTextField();
         chkinactive = new javax.swing.JCheckBox();
+        jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -206,6 +260,11 @@ public class frminventory extends javax.swing.JFrame {
                 btnresetMouseExited(evt);
             }
         });
+        btnreset.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnresetActionPerformed(evt);
+            }
+        });
         getContentPane().add(btnreset, new org.netbeans.lib.awtextra.AbsoluteConstraints(510, 450, 169, 53));
 
         btnAdd.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
@@ -233,11 +292,11 @@ public class frminventory extends javax.swing.JFrame {
                 txtsearchActionPerformed(evt);
             }
         });
-        getContentPane().add(txtsearch, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 80, 190, 25));
+        getContentPane().add(txtsearch, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 80, 190, 25));
 
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel2.setText("Search");
-        getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 80, 50, 25));
+        getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 80, 50, 25));
 
         txtno.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
         txtno.addActionListener(new java.awt.event.ActionListener() {
@@ -407,6 +466,14 @@ public class frminventory extends javax.swing.JFrame {
         chkinactive.setText("Inactive");
         getContentPane().add(chkinactive, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 100, -1, -1));
 
+        jButton1.setText("Import");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+        getContentPane().add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(600, 80, 70, -1));
+
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
@@ -416,47 +483,49 @@ public class frminventory extends javax.swing.JFrame {
     }//GEN-LAST:event_btnAddMouseEntered
 
     private void btnAddMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnAddMouseExited
-        btnAdd.setBackground(new Color(255,255,255));
+        btnAdd.setBackground(new Color(255, 255, 255));
         btnAdd.setForeground(Color.black);
     }//GEN-LAST:event_btnAddMouseExited
 
     private void btnupdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnupdateActionPerformed
-        var inactive=chkinactive.isSelected();
+        var inactive = chkinactive.isSelected();
         int inactive1;
-        if (inactive==true) {
-            inactive1=1;
+        if (inactive == true) {
+            inactive1 = 1;
+        } else {
+            inactive1 = 0;
         }
-        else{
-            inactive1=0;
-        }
-        int srno=parseInt(txtno.getText());
-        String sql="update/update tbl_inventory set inventory_code = '"+txtcode.getText()+"',inventory_name = '"+txtname.getText()+
-                "',invemtory_description = '"+txtdescription.getText()+
-                "',inventory_barcode = "+parseInt(txtbarcode.getText())+",inventory_Fkcompany = "+company+",inventory_saleprice = "+parseInt(txtsaleprice3.getText())+",inventory_saledisc = "+parseInt(txtsaledisc.getText())+" "
-                + ", inventory_saletax = "+parseInt(txtsaletax.getText())+" , inventory_purchaseprice = "+parseInt(txtpurchaseprice.getText())+
-                " , inventory_purchasedisc = "+parseInt(txtpurchasedisc.getText())+" ,inventory_purchasetax = "+parseInt(txtpurchasetax.getText())+" , inventory_inactive = "+inactive1+" , inventory_quantity = "+parseInt(txtqty.getText())+" , inventory_minstock = "+parseInt(txtminstock.getText())+" where inventory_id = "+srno;
+        int srno = parseInt(txtno.getText());
+        String sql = "update/update tbl_inventory set inventory_code = '" + txtcode.getText() + "',inventory_name = '" + txtname.getText()
+                + "',invemtory_description = '" + txtdescription.getText()
+                + "',inventory_barcode = " + parseInt(txtbarcode.getText()) + ",inventory_Fkcompany = " + company + ",inventory_saleprice = " + parseInt(txtsaleprice3.getText()) + ",inventory_saledisc = " + parseInt(txtsaledisc.getText()) + " "
+                + ", inventory_saletax = " + parseInt(txtsaletax.getText()) + " , inventory_purchaseprice = " + parseInt(txtpurchaseprice.getText())
+                + " , inventory_purchasedisc = " + parseInt(txtpurchasedisc.getText()) + " ,inventory_purchasetax = " + parseInt(txtpurchasetax.getText()) + " , inventory_inactive = " + inactive1 + " , inventory_quantity = " + parseInt(txtqty.getText()) + " , inventory_minstock = " + parseInt(txtminstock.getText()) + " where inventory_id = " + srno;
         System.out.println(sql);
         fkConnection(sql);
+        showData();
+        clearFields();
     }//GEN-LAST:event_btnupdateActionPerformed
 
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
         System.out.println(company);
-        var inactive=chkinactive.isSelected();
+        var inactive = chkinactive.isSelected();
         int inactive1;
-        if (inactive==true) {
-            inactive1=1;
-        }
-        else{
-            inactive1=0;
+        if (inactive == true) {
+            inactive1 = 1;
+        } else {
+            inactive1 = 0;
         }
         String query = "insert/insert into tbl_inventory(inventory_Fkcompany,inventory_code,inventory_name,inventory_barcode,invemtory_description,"
                 + "inventory_saleprice,inventory_saledisc,inventory_saletax,inventory_purchaseprice,inventory_purchasedisc,inventory_purchasetax,"
                 + "inventory_quantity,inventory_minstock,inventory_inactive) Values"
-                + " (" + company + ",'" + txtcode.getText() + "','"+txtname.getText()+"',"+parseInt(txtbarcode.getText())
-                +",'"+txtdescription.getText()+"',"+parseInt(txtsaleprice3.getText())+","+parseInt(txtsaledisc.getText())+","
-                +parseInt(txtsaletax.getText())+","+parseInt(txtpurchaseprice.getText())+","+parseInt(txtpurchasedisc.getText())+","+parseInt(txtpurchasetax.getText())+","+parseInt(txtqty.getText())+","+parseInt(txtminstock.getText())+","+inactive1+")";
+                + " (" + company + ",'" + txtcode.getText() + "','" + txtname.getText() + "'," + parseInt(txtbarcode.getText())
+                + ",'" + txtdescription.getText() + "'," + parseInt(txtsaleprice3.getText()) + "," + parseInt(txtsaledisc.getText()) + ","
+                + parseInt(txtsaletax.getText()) + "," + parseInt(txtpurchaseprice.getText()) + "," + parseInt(txtpurchasedisc.getText()) + "," + parseInt(txtpurchasetax.getText()) + "," + parseInt(txtqty.getText()) + "," + parseInt(txtminstock.getText()) + "," + inactive1 + ")";
         System.out.println(query);
         fkConnection(query);
+        showData();
+        clearFields();
     }//GEN-LAST:event_btnAddActionPerformed
 
     private void btnupdateMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnupdateMouseEntered
@@ -465,7 +534,7 @@ public class frminventory extends javax.swing.JFrame {
     }//GEN-LAST:event_btnupdateMouseEntered
 
     private void btnupdateMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnupdateMouseExited
-        btnupdate.setBackground(new Color(255,255,255));
+        btnupdate.setBackground(new Color(255, 255, 255));
         btnupdate.setForeground(Color.black);
     }//GEN-LAST:event_btnupdateMouseExited
 
@@ -480,12 +549,12 @@ public class frminventory extends javax.swing.JFrame {
     }//GEN-LAST:event_btndeleteMouseExited
 
     private void btnresetMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnresetMouseEntered
-         btnreset.setBackground(new Color(54, 33, 89));
+        btnreset.setBackground(new Color(54, 33, 89));
         btnreset.setForeground(Color.white);
     }//GEN-LAST:event_btnresetMouseEntered
 
     private void btnresetMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnresetMouseExited
-         btnreset.setBackground(Color.white);
+        btnreset.setBackground(Color.white);
         btnreset.setForeground(Color.black);
     }//GEN-LAST:event_btnresetMouseExited
 
@@ -547,9 +616,9 @@ public class frminventory extends javax.swing.JFrame {
 
     private void cmbcompanyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbcompanyActionPerformed
 
-        String cmp_name=cmbcompany.getSelectedItem().toString();
+        String cmp_name = cmbcompany.getSelectedItem().toString();
         System.out.println(cmp_name);
-        String sql="fkcompany/Select company_id from tbl_company where company_name='"+cmp_name+"'";
+        String sql = "fkcompany/Select company_id from tbl_company where company_name='" + cmp_name + "'";
         System.out.println(sql);
         fkConnection(sql);
     }//GEN-LAST:event_cmbcompanyActionPerformed
@@ -560,7 +629,17 @@ public class frminventory extends javax.swing.JFrame {
         String query = "delete/delete from tbl_inventory where inventory_id=" + srno;
         System.out.println(query);
         fkConnection(query);
+        showData();
+        clearFields();
     }//GEN-LAST:event_btndeleteActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        showData();
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void btnresetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnresetActionPerformed
+        clearFields();
+    }//GEN-LAST:event_btnresetActionPerformed
 
     /**
      * @param args the command line arguments
@@ -609,6 +688,7 @@ public class frminventory extends javax.swing.JFrame {
     private javax.swing.JButton btnupdate;
     private javax.swing.JCheckBox chkinactive;
     private javax.swing.JComboBox<String> cmbcompany;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;

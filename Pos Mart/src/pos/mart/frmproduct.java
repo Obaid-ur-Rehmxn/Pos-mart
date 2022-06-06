@@ -25,20 +25,22 @@ import javax.swing.table.DefaultTableModel;
  * @author Obaid
  */
 public class frmproduct extends javax.swing.JFrame {
-Socket clientSocket;
- private String Data;
- int counter=0;
+
+    Socket clientSocket;
+    private String Data;
+    int counter = 0;
+
     /**
      * Creates new form frmproduct
      */
-    public frmproduct()  {
+    public frmproduct() {
         initComponents();
         this.getContentPane().setBackground(Color.white);
         this.setResizable(false);
         DefaultTableCellRenderer MyHeaderRender = new DefaultTableCellRenderer();
         MyHeaderRender.setBackground(new Color(54, 33, 89));
         MyHeaderRender.setForeground(new Color(255, 255, 255));
-        MyHeaderRender.setHorizontalAlignment( SwingConstants.CENTER );
+        MyHeaderRender.setHorizontalAlignment(SwingConstants.CENTER);
         tblproduct.getTableHeader().getColumnModel().getColumn(0).setHeaderRenderer(MyHeaderRender);
         tblproduct.getTableHeader().getColumnModel().getColumn(1).setHeaderRenderer(MyHeaderRender);
         tblproduct.getTableHeader().getColumnModel().getColumn(2).setHeaderRenderer(MyHeaderRender);
@@ -56,27 +58,51 @@ Socket clientSocket;
         tblproduct.getColumnModel().getColumn(6).setPreferredWidth(56);
         tblproduct.getColumnModel().getColumn(7).setPreferredWidth(56);
     }
-     String Connection(String data) throws IOException{
-    String modifiedSentence;
-        
-        clientSocket = new Socket("localhost", 9999);
-        
-        DataOutputStream outToServer =
-                new DataOutputStream(clientSocket.getOutputStream());
-        
-        BufferedReader inFromServer =  new BufferedReader(new
-                InputStreamReader(clientSocket.getInputStream()));
-        
-        outToServer.writeBytes(data + '\n');
-        
-        modifiedSentence = inFromServer.readLine();
-        
-        System.out.println("FROM SERVER: " + modifiedSentence);
-        
 
-        
+    String Connection(String data) throws IOException {
+        String modifiedSentence;
+
+        clientSocket = new Socket("localhost", 9999);
+
+        DataOutputStream outToServer
+                = new DataOutputStream(clientSocket.getOutputStream());
+
+        BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+
+        outToServer.writeBytes(data + '\n');
+
+        modifiedSentence = inFromServer.readLine();
+
+        System.out.println("FROM SERVER: " + modifiedSentence);
+
         return modifiedSentence;
-}
+    }
+
+    void showData() {
+        try {
+            Connection("tbl_inventory");
+            byte[] b = new byte[2002];
+            Socket sr = new Socket("localhost", 9999);
+            InputStream is = sr.getInputStream();
+            FileOutputStream fr = new FileOutputStream("tbl_inventory.txt");
+            is.read(b, 0, b.length);
+            fr.write(b, 0, b.length);
+            is.close();
+            fr.close();
+            sr.close();
+            BufferedReader br = new BufferedReader(new FileReader("tbl_inventory.txt"));
+            DefaultTableModel model = (DefaultTableModel) tblproduct.getModel();
+            Object[] tableLines = br.lines().toArray();
+            for (int i = 0; i < tableLines.length - 1; i++) {
+                String line = tableLines[i].toString().trim();
+                String[] dataRow = line.split(",");
+                model.addRow(dataRow);
+
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(frmproduct.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -196,30 +222,7 @@ Socket clientSocket;
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-      
-    try {
-        Connection("tbl_inventory");
-        byte []b=new byte[2002];
-        Socket sr=new Socket("localhost",9999);
-        InputStream is =sr.getInputStream();
-        FileOutputStream fr=new FileOutputStream("tbl_inventory.txt");
-//        fr.write(0);
-        is.read(b, 0, b.length);
-        fr.write(b, 0, b.length);
-        sr.close();
-        BufferedReader br = new BufferedReader(new FileReader("tbl_inventory.txt"));
-            DefaultTableModel model = (DefaultTableModel) tblproduct.getModel();
-            Object[] tableLines = br.lines().toArray();
-            for (int i = 0; i < tableLines.length-1; i++) {
-                String line = tableLines[i].toString().trim();
-                String[] dataRow = line.split(",");
-                model.addRow(dataRow);
-             
-        }
-    } catch (IOException ex) {
-        Logger.getLogger(frmproduct.class.getName()).log(Level.SEVERE, null, ex);
-    }
-        
+        showData();
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void formWindowActivated(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowActivated
@@ -250,7 +253,8 @@ Socket clientSocket;
         } catch (ClassNotFoundException ex) {
             java.util.logging.Logger.getLogger(frmproduct.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(frmproduct.class.getName()).log(java.util.logging.Level.SEVERE, null, ex );} catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(frmproduct.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
             java.util.logging.Logger.getLogger(frmproduct.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(frmproduct.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);

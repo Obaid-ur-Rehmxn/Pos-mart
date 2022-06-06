@@ -31,6 +31,9 @@ public class frmcompany extends javax.swing.JFrame {
 
     /**
      * Creates new form frmcompany
+     * @param data
+     * @return 
+     * @throws java.io.IOException 
      */
     public String Connection(String data) throws IOException {
 
@@ -45,7 +48,43 @@ public class frmcompany extends javax.swing.JFrame {
 
         return "ok";
     }
-
+    
+    void showData(){
+    try{
+        Connection("tbl_company");
+            System.out.println("connection performed");
+            byte []b=new byte[2002];
+            Socket sr=new Socket("localhost",9999);
+            InputStream is =sr.getInputStream();
+            FileOutputStream fr=new FileOutputStream("tbl_company.txt");
+//            fr.write(0);
+            is.read(b, 0, b.length);
+            fr.write(b, 0, b.length);
+            is.close();
+            fr.close();
+            sr.close();
+            BufferedReader br = new BufferedReader(new FileReader("tbl_company.txt"));
+            DefaultTableModel model = (DefaultTableModel) tblcompany.getModel();
+            Object[] tableLines = br.lines().toArray();
+            for (int i = model.getRowCount() - 1; i >= 0; i--) {
+                model.removeRow(i);
+            }
+            for (int i = 0; i < tableLines.length-1; i++) {
+                String line = tableLines[i].toString().trim();
+                String[] dataRow = line.split(",");
+                model.addRow(dataRow);
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(frmcompany.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    void clearFields(){
+        txtname.setText("");
+        txtshortname.setText("");
+        txtsearch.setText("");
+        txtname.requestFocus();
+    }
     public frmcompany() {
             initComponents();
             this.getContentPane().setBackground(Color.white);
@@ -61,6 +100,7 @@ public class frmcompany extends javax.swing.JFrame {
             btnupdate.setBackground(Color.white);
             btndelete.setBackground(Color.white);
             btnreset.setBackground(Color.white);
+            clearFields();
              }
 
     /**
@@ -183,6 +223,11 @@ public class frmcompany extends javax.swing.JFrame {
                 btnresetMouseExited(evt);
             }
         });
+        btnreset.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnresetActionPerformed(evt);
+            }
+        });
         getContentPane().add(btnreset, new org.netbeans.lib.awtextra.AbsoluteConstraints(510, 450, 169, 53));
 
         btnAdd.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
@@ -274,6 +319,8 @@ public class frmcompany extends javax.swing.JFrame {
             int srno = parseInt(txtno.getText());
             String query = "update/update tbl_company set company_name='" + txtname.getText() + "',company_shortname='" + txtshortname.getText() + "' where company_id=" + srno;
             f.Connection(query);
+            showData();
+            clearFields();
         } catch (IOException ex) {
             Logger.getLogger(frmcompany.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -284,6 +331,8 @@ public class frmcompany extends javax.swing.JFrame {
         try {
             String query = "insert/insert into tbl_company (company_name,company_shortname) values ('" + txtname.getText() + "','" + txtshortname.getText() + "')";
             f.Connection(query);
+            showData();
+            clearFields();
         } catch (IOException ex) {
             Logger.getLogger(frmcompany.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -341,6 +390,8 @@ public class frmcompany extends javax.swing.JFrame {
             int srno = parseInt(txtno.getText());
             String query = "delete/delete from tbl_company where company_id=" + srno;
             f.Connection(query);
+            showData();
+            clearFields();
         } catch (IOException ex) {
             Logger.getLogger(frmcompany.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -348,29 +399,12 @@ public class frmcompany extends javax.swing.JFrame {
     }//GEN-LAST:event_btndeleteActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        try{
-        Connection("tbl_company");
-            System.out.println("connection performed");
-            byte []b=new byte[2002];
-            Socket sr=new Socket("localhost",9999);
-            InputStream is =sr.getInputStream();
-            FileOutputStream fr=new FileOutputStream("tbl_company.txt");
-//            fr.write(0);
-            is.read(b, 0, b.length);
-            fr.write(b, 0, b.length);
-            sr.close();
-            BufferedReader br = new BufferedReader(new FileReader("tbl_company.txt"));
-            DefaultTableModel model = (DefaultTableModel) tblcompany.getModel();
-            Object[] tableLines = br.lines().toArray();
-            for (int i = 0; i < tableLines.length-1; i++) {
-                String line = tableLines[i].toString().trim();
-                String[] dataRow = line.split(",");
-                model.addRow(dataRow);
-            }
-        } catch (IOException ex) {
-            Logger.getLogger(frmcompany.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        showData();
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void btnresetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnresetActionPerformed
+    clearFields();
+    }//GEN-LAST:event_btnresetActionPerformed
 
     /**
      * @param args the command line arguments

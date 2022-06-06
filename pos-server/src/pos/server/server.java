@@ -91,15 +91,14 @@ public class server {
                 getDataFromInventory(clientdata);
                 outToClient.writeBytes("filecreated" + '\n');
                 connectionSocket.close();
-                String path = s + ".txt";
-        while (true) {     
+                String path = s + ".txt";   
             Socket sr = welcomeSocket.accept();
             FileInputStream fr = new FileInputStream(path);
             byte b[] = new byte[2002];
             fr.read(b, 0, b.length);
             OutputStream os = sr.getOutputStream();
             os.write(b, 0, b.length);
-        }
+            sr.close();
             }
              else if (clientdata.equals("tbl_company")) {
                 s = clientdata;
@@ -108,14 +107,42 @@ public class server {
                 connectionSocket.close();
                 String path = s + ".txt";
                 Socket sr;
-        while (true) {
             sr = welcomeSocket.accept();
             FileInputStream fr = new FileInputStream(path);
             byte b[] = new byte[2002];
             fr.read(b, 0, b.length);
             OutputStream os = sr.getOutputStream();
             os.write(b, 0, b.length);
-        }
+            sr.close();
+       }
+             else if (clientdata.equals("tbl_inventory1")) {
+                s = clientdata;
+                getDataFrominventory1();
+                outToClient.writeBytes("filecreated" + '\n');
+                connectionSocket.close();
+                String path = s + ".txt";
+                Socket sr;
+            sr = welcomeSocket.accept();
+            FileInputStream fr = new FileInputStream(path);
+            byte b[] = new byte[2002];
+            fr.read(b, 0, b.length);
+            OutputStream os = sr.getOutputStream();
+            os.write(b, 0, b.length);
+            sr.close();
+       }     else if (clientdata.equals("tbl_expense")) {
+                s = clientdata;
+                getDataFromexpense();
+                outToClient.writeBytes("filecreated" + '\n');
+                connectionSocket.close();
+                String path = s + ".txt";
+                Socket sr;
+            sr = welcomeSocket.accept();
+            FileInputStream fr = new FileInputStream(path);
+            byte b[] = new byte[2002];
+            fr.read(b, 0, b.length);
+            OutputStream os = sr.getOutputStream();
+            os.write(b, 0, b.length);
+            sr.close();
        }
         }
     }
@@ -135,16 +162,6 @@ public class server {
         return status;
     }
 
-//    public void checkrows(String table) throws SQLException, IOException{
-//        System.out.println("into check");
-//        Connection con = DriverManager.getConnection(ConnectionClass.conString);
-//        PreparedStatement statement = con.prepareStatement("SELECT count(*) FROM "+table);
-//        ResultSet rs = statement.executeQuery();
-//        ResultSetMetaData rsmd = (ResultSetMetaData) rs.getMetaData();
-//         int numberOfColumn = rsmd.getColumnCount()
-//        System.out.println(count);
-//      getDataFromTables(count,table);
-//    }
     String getDataFromInventory(String table) throws SQLException, IOException {
         String[] data = {"", "", "", "", "", "", "", "", ""};
         String fileData = "";
@@ -201,18 +218,56 @@ public class server {
         return fileData;
     }
     
-    void sendFile(String table) throws IOException {
-        String path = table + ".txt";
-        ServerSocket s = new ServerSocket(9999);
-        while (true) {     
-        Socket sr = s.accept();
-            FileInputStream fr = new FileInputStream(path);
-            byte b[] = new byte[2002];
-            fr.read(b, 0, b.length);
-            OutputStream os = sr.getOutputStream();
-            os.write(b, 0, b.length);
-        }  
+    String getDataFrominventory1() throws SQLException, IOException {
+        System.out.println("inventory1");
+        String[] data = {"", ""};
+        String fileData = " ";
+        String path ="tbl_inventory1.txt";
+        FileWriter myWriter = new FileWriter(path);
+        myWriter.write("");
+        myWriter.close();
+        FileWriter file = new FileWriter(path);
+        Connection con = DriverManager.getConnection(ConnectionClass.conString);
+        PreparedStatement statement = con.prepareStatement("SELECT * FROM tbl_inventory");
+        ResultSet rs = statement.executeQuery();
+        while (rs.next()) {
+            data[0] = rs.getString("inventory_id");
+            data[1] = rs.getString("inventory_name");
+            fileData = data[0].concat("," + data[1]);
+            System.out.println(fileData);    
+        file.write(fileData);
+        file.write("\n");
+        }
+        file.close();
+        con.close();
+        return fileData;
     }
+    
+    String getDataFromexpense() throws SQLException, IOException {
+        System.out.println("expense");
+        String[] data = {"", ""};
+        String fileData = " ";
+        String path ="tbl_expense.txt";
+        FileWriter myWriter = new FileWriter(path);
+        myWriter.write("");
+        myWriter.close();
+        FileWriter file = new FileWriter(path);
+        Connection con = DriverManager.getConnection(ConnectionClass.conString);
+        PreparedStatement statement = con.prepareStatement("SELECT * FROM tbl_expense1");
+        ResultSet rs = statement.executeQuery();
+        while (rs.next()) {
+            data[0] = rs.getString("expense_id");
+            data[1] = rs.getString("expense_date");
+            fileData = data[0].concat("," + data[1]);
+            System.out.println(fileData);    
+        file.write(fileData);
+        file.write("\n");
+        }
+        file.close();
+        con.close();
+        return fileData;
+    }
+    
 
     /**
      * @param args the command line arguments

@@ -9,45 +9,28 @@ import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
+import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import static java.lang.Integer.parseInt;
 import java.net.Socket;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-<<<<<<< Updated upstream
 import java.util.logging.Level;
 import java.util.logging.Logger;
-=======
-<<<<<<< HEAD
-=======
-import java.util.logging.Level;
-import java.util.logging.Logger;
->>>>>>> 7eea732bffef185893ab84ed0e1dcb7a72f1c859
->>>>>>> Stashed changes
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
-
 /**
  *
  * @author Obaid
  */
 public class frmexpense extends javax.swing.JFrame {
-<<<<<<< Updated upstream
     DefaultTableModel model;
     Socket clientSocket;
-=======
-<<<<<<< HEAD
-
-    DefaultTableModel model;
-
-=======
-    DefaultTableModel model;
-    Socket clientSocket;
->>>>>>> 7eea732bffef185893ab84ed0e1dcb7a72f1c859
->>>>>>> Stashed changes
     /**
      * Creates new form frmexpense
      */
@@ -67,51 +50,67 @@ public class frmexpense extends javax.swing.JFrame {
         DateFormat datefor = new SimpleDateFormat("YYYY-MM-dd");
         Date date = new Date();
         txtdate.setText(datefor.format(date));
-<<<<<<< Updated upstream
-=======
-<<<<<<< HEAD
         btnAdd.setBackground(Color.white);
         btnupdate.setBackground(Color.white);
         btndelete.setBackground(Color.white);
         btnreset.setBackground(Color.white);
+        clearFields();
     }
 
     public String Connection(String data) throws IOException {
 
         Socket clientSocket = new Socket("localhost", 9999);
-=======
->>>>>>> Stashed changes
-    }
+
     
-    public String Connection(String data) throws IOException {
-
-        clientSocket = new Socket("localhost", 9999);
-<<<<<<< Updated upstream
-=======
->>>>>>> 7eea732bffef185893ab84ed0e1dcb7a72f1c859
->>>>>>> Stashed changes
-
         DataOutputStream outToServer
                 = new DataOutputStream(clientSocket.getOutputStream());
 
         BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 
         outToServer.writeBytes(data + '\n');
-
-<<<<<<< Updated upstream
         String s=inFromServer.readLine();
         return s;    
-=======
-<<<<<<< HEAD
-        String s = inFromServer.readLine();
-        return s;
-=======
-        String s=inFromServer.readLine();
-        return s;    
->>>>>>> 7eea732bffef185893ab84ed0e1dcb7a72f1c859
->>>>>>> Stashed changes
+    }
+    
+    void showData(){
+    try{
+        Connection("tbl_expense");
+            System.out.println("connection performed");
+            byte []b=new byte[2002];
+            Socket sr=new Socket("localhost",9999);
+            InputStream is =sr.getInputStream();
+            FileOutputStream fr=new FileOutputStream("tbl_expense.txt");
+//            fr.write(0);
+            is.read(b, 0, b.length);
+            fr.write(b, 0, b.length);
+            is.close();
+            fr.close();
+            sr.close();
+            BufferedReader br = new BufferedReader(new FileReader("tbl_expense.txt"));
+            DefaultTableModel model = (DefaultTableModel) tblexpense1.getModel();
+            Object[] tableLines = br.lines().toArray();
+            for (int i = model.getRowCount() - 1; i >= 0; i--) {
+                model.removeRow(i);
+            }
+            for (int i = 0; i < tableLines.length-1; i++) {
+                String line = tableLines[i].toString().trim();
+                String[] dataRow = line.split(",");
+                model.addRow(dataRow);
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(frmcompany.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
+    void clearFields(){
+    txtdescription.setText("");
+    txtamount.setText("");
+    txtttlamount.setText("");
+    txtdescription.requestFocus();
+    for (int i = model.getRowCount() - 1; i >= 0; i--) {
+                model.removeRow(i);
+            }
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -139,6 +138,7 @@ public class frmexpense extends javax.swing.JFrame {
         txtdescription = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
         txtttlamount = new javax.swing.JTextField();
+        jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -325,13 +325,22 @@ public class frmexpense extends javax.swing.JFrame {
             }
         });
 
+        jButton1.setText("Import");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 216, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 216, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton1))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
@@ -371,24 +380,25 @@ public class frmexpense extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 477, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtno, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtdate, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton1))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(txtno, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtdate, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(txtamount, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(txtdescription, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(3, 3, 3)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 375, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(txtttlamount, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 440, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -411,40 +421,19 @@ public class frmexpense extends javax.swing.JFrame {
     }//GEN-LAST:event_btnAddMouseExited
 
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
-<<<<<<< Updated upstream
-=======
-<<<<<<< HEAD
-        try {
-            String query = "insert/insert into tbl_expense1(expense_date) values ('" + txtdate.getText() + "')";
-            System.out.println(query);
-            Connection(query);
-            for (int i = 0; i < tblexpense2.getRowCount(); i++) {
-                String query1 = "insert/insert into tbl_expense2(expense_description,expense_amount,expense_Fkid) values ('" + model.getValueAt(i, 0).toString() + "','" + model.getValueAt(i, 1).toString() + "'," + parseInt(txtno.getText()) + ")";
-=======
->>>>>>> Stashed changes
        try {
             String query = "insert/insert into tbl_expense1(expense_date) values ('" + txtdate.getText() + "')";
             System.out.println(query);
             Connection(query);
             for(int i=0;i<tblexpense2.getRowCount();i++){
             String query1 = "insert/insert into tbl_expense2(expense_description,expense_amount,expense_Fkid) values ('" + model.getValueAt(i, 0).toString() + "','" + model.getValueAt(i, 1).toString() + "',"+parseInt(txtno.getText())+")";    
-<<<<<<< Updated upstream
-=======
->>>>>>> 7eea732bffef185893ab84ed0e1dcb7a72f1c859
->>>>>>> Stashed changes
                 System.out.println(query1);
                 Connection(query1);
             }
+            showData();
+            clearFields();
         } catch (IOException ex) {
-<<<<<<< Updated upstream
-            Logger.getLogger(frmcompany.class.getName()).log(Level.SEVERE, null, ex);
-=======
-<<<<<<< HEAD
             System.out.println("Doesnt execute the query");
-=======
-            Logger.getLogger(frmcompany.class.getName()).log(Level.SEVERE, null, ex);
->>>>>>> 7eea732bffef185893ab84ed0e1dcb7a72f1c859
->>>>>>> Stashed changes
         }
     }//GEN-LAST:event_btnAddActionPerformed
 
@@ -459,9 +448,7 @@ public class frmexpense extends javax.swing.JFrame {
     }//GEN-LAST:event_btndeleteMouseExited
 
     private void btndeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btndeleteActionPerformed
-<<<<<<< Updated upstream
-=======
-<<<<<<< HEAD
+
         try {
             String query = "delete/Delete from tbl_expense1 where expense_id=" + parseInt(txtno.getText());
             System.out.println(query);
@@ -469,23 +456,10 @@ public class frmexpense extends javax.swing.JFrame {
             String query1 = "delete/Delete from tbl_expense2 where expense_Fkid=" + parseInt(txtno.getText());
             System.out.println(query1);
             Connection(query1);
+            showData();
+            clearFields();
         } catch (IOException ex) {
             System.out.println("Doesnt execute the query");
-=======
->>>>>>> Stashed changes
-       try {
-            String query = "delete/Delete from tbl_expense1 where expense_id="+parseInt(txtno.getText());
-            System.out.println(query);
-            Connection(query);
-            String query1 = "delete/Delete from tbl_expense2 where expense_Fkid="+parseInt(txtno.getText());    
-                System.out.println(query1);
-                Connection(query1);
-        } catch (IOException ex) {
-            Logger.getLogger(frmcompany.class.getName()).log(Level.SEVERE, null, ex);
-<<<<<<< Updated upstream
-=======
->>>>>>> 7eea732bffef185893ab84ed0e1dcb7a72f1c859
->>>>>>> Stashed changes
         }
     }//GEN-LAST:event_btndeleteActionPerformed
 
@@ -500,7 +474,7 @@ public class frmexpense extends javax.swing.JFrame {
     }//GEN-LAST:event_btnresetMouseExited
 
     private void btnresetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnresetActionPerformed
-        // TODO add your handling code here:
+        clearFields();
     }//GEN-LAST:event_btnresetActionPerformed
 
     private void btnupdateMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnupdateMouseEntered
@@ -515,38 +489,18 @@ public class frmexpense extends javax.swing.JFrame {
 
     private void btnupdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnupdateActionPerformed
         try {
-<<<<<<< Updated upstream
-=======
-<<<<<<< HEAD
-            String query = "update/Update tbl_expense1 set expense_date='" + txtdate.getText() + "' where expense_id=" + Integer.parseInt(txtno.getText());
-            System.out.println(query);
-            Connection(query);
-            for (int i = 0; i < tblexpense2.getRowCount(); i++) {
-                String query1 = "update/update tbl_expense2 Set expense_description='" + model.getValueAt(i, 0).toString() + "',expense_amount='" + model.getValueAt(i, 1).toString() + "' where expense_Fkid=" + parseInt(txtno.getText());
-=======
->>>>>>> Stashed changes
-            String query = "update/Update tbl_expense1 set expense_date='"+txtdate.getText()+"' where expense_id="+parseInt(txtno.getText());
+           String query = "update/Update tbl_expense1 set expense_date='"+txtdate.getText()+"' where expense_id="+parseInt(txtno.getText());
             System.out.println(query);
             Connection(query);
             for(int i=0;i<tblexpense2.getRowCount();i++){
             String query1 = "update/update tbl_expense2 Set expense_description='" + model.getValueAt(i, 0).toString() + "',expense_amount='" + model.getValueAt(i, 1).toString() + "' where expense_Fkid="+parseInt(txtno.getText());    
-<<<<<<< Updated upstream
-=======
->>>>>>> 7eea732bffef185893ab84ed0e1dcb7a72f1c859
->>>>>>> Stashed changes
                 System.out.println(query1);
                 Connection(query1);
             }
+            showData();
+            clearFields();
         } catch (IOException ex) {
-<<<<<<< Updated upstream
-            Logger.getLogger(frmcompany.class.getName()).log(Level.SEVERE, null, ex);
-=======
-<<<<<<< HEAD
             System.out.println("Doesnt execute the query");
-=======
-            Logger.getLogger(frmcompany.class.getName()).log(Level.SEVERE, null, ex);
->>>>>>> 7eea732bffef185893ab84ed0e1dcb7a72f1c859
->>>>>>> Stashed changes
         }
     }//GEN-LAST:event_btnupdateActionPerformed
 
@@ -572,17 +526,22 @@ public class frmexpense extends javax.swing.JFrame {
 
     private void txtamountKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtamountKeyPressed
         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
-<<<<<<< Updated upstream
+            String total="0";
         model.insertRow(model.getRowCount(), new Object[]{txtdescription.getText(), txtamount.getText()});
-=======
-<<<<<<< HEAD
-            model.insertRow(model.getRowCount(), new Object[]{txtdescription.getText(), txtamount.getText()});
-=======
-        model.insertRow(model.getRowCount(), new Object[]{txtdescription.getText(), txtamount.getText()});
->>>>>>> 7eea732bffef185893ab84ed0e1dcb7a72f1c859
->>>>>>> Stashed changes
+        txtdescription.setText("");
+        txtamount.setText("");
+        txtdescription.requestFocus();
+        for (int i = 0; i < tblexpense2.getRowCount(); i++) {
+                int Amount = Integer.parseInt(tblexpense2.getValueAt(i, 1) + "");
+                total = String.valueOf(Amount + Integer.parseInt(total));
+            }
+            txtttlamount.setText(total);
         }
     }//GEN-LAST:event_txtamountKeyPressed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    showData();
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -624,6 +583,7 @@ public class frmexpense extends javax.swing.JFrame {
     private javax.swing.JButton btndelete;
     private javax.swing.JButton btnreset;
     private javax.swing.JButton btnupdate;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
