@@ -16,8 +16,16 @@ import java.net.Socket;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+<<<<<<< Updated upstream
 import java.util.logging.Level;
 import java.util.logging.Logger;
+=======
+<<<<<<< HEAD
+=======
+import java.util.logging.Level;
+import java.util.logging.Logger;
+>>>>>>> 7eea732bffef185893ab84ed0e1dcb7a72f1c859
+>>>>>>> Stashed changes
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
@@ -27,8 +35,19 @@ import javax.swing.table.DefaultTableModel;
  * @author Obaid
  */
 public class frmexpense extends javax.swing.JFrame {
+<<<<<<< Updated upstream
     DefaultTableModel model;
     Socket clientSocket;
+=======
+<<<<<<< HEAD
+
+    DefaultTableModel model;
+
+=======
+    DefaultTableModel model;
+    Socket clientSocket;
+>>>>>>> 7eea732bffef185893ab84ed0e1dcb7a72f1c859
+>>>>>>> Stashed changes
     /**
      * Creates new form frmexpense
      */
@@ -39,7 +58,7 @@ public class frmexpense extends javax.swing.JFrame {
         DefaultTableCellRenderer MyHeaderRender = new DefaultTableCellRenderer();
         MyHeaderRender.setBackground(new Color(54, 33, 89));
         MyHeaderRender.setForeground(new Color(255, 255, 255));
-        MyHeaderRender.setHorizontalAlignment( SwingConstants.CENTER );
+        MyHeaderRender.setHorizontalAlignment(SwingConstants.CENTER);
         tblexpense1.getTableHeader().getColumnModel().getColumn(0).setHeaderRenderer(MyHeaderRender);
         tblexpense1.getTableHeader().getColumnModel().getColumn(1).setHeaderRenderer(MyHeaderRender);
         tblexpense2.getTableHeader().getColumnModel().getColumn(0).setHeaderRenderer(MyHeaderRender);
@@ -48,11 +67,29 @@ public class frmexpense extends javax.swing.JFrame {
         DateFormat datefor = new SimpleDateFormat("YYYY-MM-dd");
         Date date = new Date();
         txtdate.setText(datefor.format(date));
+<<<<<<< Updated upstream
+=======
+<<<<<<< HEAD
+        btnAdd.setBackground(Color.white);
+        btnupdate.setBackground(Color.white);
+        btndelete.setBackground(Color.white);
+        btnreset.setBackground(Color.white);
+    }
+
+    public String Connection(String data) throws IOException {
+
+        Socket clientSocket = new Socket("localhost", 9999);
+=======
+>>>>>>> Stashed changes
     }
     
     public String Connection(String data) throws IOException {
 
         clientSocket = new Socket("localhost", 9999);
+<<<<<<< Updated upstream
+=======
+>>>>>>> 7eea732bffef185893ab84ed0e1dcb7a72f1c859
+>>>>>>> Stashed changes
 
         DataOutputStream outToServer
                 = new DataOutputStream(clientSocket.getOutputStream());
@@ -61,8 +98,18 @@ public class frmexpense extends javax.swing.JFrame {
 
         outToServer.writeBytes(data + '\n');
 
+<<<<<<< Updated upstream
         String s=inFromServer.readLine();
         return s;    
+=======
+<<<<<<< HEAD
+        String s = inFromServer.readLine();
+        return s;
+=======
+        String s=inFromServer.readLine();
+        return s;    
+>>>>>>> 7eea732bffef185893ab84ed0e1dcb7a72f1c859
+>>>>>>> Stashed changes
     }
 
     /**
@@ -134,7 +181,6 @@ public class frmexpense extends javax.swing.JFrame {
         });
         jScrollPane1.setViewportView(tblexpense1);
 
-        btnAdd.setBackground(new java.awt.Color(255, 255, 255));
         btnAdd.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
         btnAdd.setText("ADD");
         btnAdd.setContentAreaFilled(false);
@@ -153,7 +199,6 @@ public class frmexpense extends javax.swing.JFrame {
             }
         });
 
-        btndelete.setBackground(new java.awt.Color(255, 255, 255));
         btndelete.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
         btndelete.setText("DELETE");
         btndelete.setContentAreaFilled(false);
@@ -172,7 +217,6 @@ public class frmexpense extends javax.swing.JFrame {
             }
         });
 
-        btnreset.setBackground(new java.awt.Color(255, 255, 255));
         btnreset.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
         btnreset.setText("RESET");
         btnreset.setContentAreaFilled(false);
@@ -191,7 +235,6 @@ public class frmexpense extends javax.swing.JFrame {
             }
         });
 
-        btnupdate.setBackground(new java.awt.Color(255, 255, 255));
         btnupdate.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
         btnupdate.setText("UPDATE");
         btnupdate.setContentAreaFilled(false);
@@ -210,7 +253,6 @@ public class frmexpense extends javax.swing.JFrame {
             }
         });
 
-        jLabel2.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel2.setText("Sr no");
 
@@ -221,7 +263,6 @@ public class frmexpense extends javax.swing.JFrame {
             }
         });
 
-        jLabel3.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel3.setText("Date");
 
@@ -274,7 +315,6 @@ public class frmexpense extends javax.swing.JFrame {
             }
         });
 
-        jLabel4.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
         jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel4.setText("Total Amount");
 
@@ -366,22 +406,45 @@ public class frmexpense extends javax.swing.JFrame {
     }//GEN-LAST:event_btnAddMouseEntered
 
     private void btnAddMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnAddMouseExited
-        btnAdd.setBackground(new Color(255,255,255));
+        btnAdd.setBackground(new Color(255, 255, 255));
         btnAdd.setForeground(Color.black);
     }//GEN-LAST:event_btnAddMouseExited
 
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
+<<<<<<< Updated upstream
+=======
+<<<<<<< HEAD
+        try {
+            String query = "insert/insert into tbl_expense1(expense_date) values ('" + txtdate.getText() + "')";
+            System.out.println(query);
+            Connection(query);
+            for (int i = 0; i < tblexpense2.getRowCount(); i++) {
+                String query1 = "insert/insert into tbl_expense2(expense_description,expense_amount,expense_Fkid) values ('" + model.getValueAt(i, 0).toString() + "','" + model.getValueAt(i, 1).toString() + "'," + parseInt(txtno.getText()) + ")";
+=======
+>>>>>>> Stashed changes
        try {
             String query = "insert/insert into tbl_expense1(expense_date) values ('" + txtdate.getText() + "')";
             System.out.println(query);
             Connection(query);
             for(int i=0;i<tblexpense2.getRowCount();i++){
             String query1 = "insert/insert into tbl_expense2(expense_description,expense_amount,expense_Fkid) values ('" + model.getValueAt(i, 0).toString() + "','" + model.getValueAt(i, 1).toString() + "',"+parseInt(txtno.getText())+")";    
+<<<<<<< Updated upstream
+=======
+>>>>>>> 7eea732bffef185893ab84ed0e1dcb7a72f1c859
+>>>>>>> Stashed changes
                 System.out.println(query1);
                 Connection(query1);
             }
         } catch (IOException ex) {
+<<<<<<< Updated upstream
             Logger.getLogger(frmcompany.class.getName()).log(Level.SEVERE, null, ex);
+=======
+<<<<<<< HEAD
+            System.out.println("Doesnt execute the query");
+=======
+            Logger.getLogger(frmcompany.class.getName()).log(Level.SEVERE, null, ex);
+>>>>>>> 7eea732bffef185893ab84ed0e1dcb7a72f1c859
+>>>>>>> Stashed changes
         }
     }//GEN-LAST:event_btnAddActionPerformed
 
@@ -391,11 +454,25 @@ public class frmexpense extends javax.swing.JFrame {
     }//GEN-LAST:event_btndeleteMouseEntered
 
     private void btndeleteMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btndeleteMouseExited
-        btndelete.setBackground(new Color(255,255,255));
+        btndelete.setBackground(new Color(255, 255, 255));
         btndelete.setForeground(Color.black);
     }//GEN-LAST:event_btndeleteMouseExited
 
     private void btndeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btndeleteActionPerformed
+<<<<<<< Updated upstream
+=======
+<<<<<<< HEAD
+        try {
+            String query = "delete/Delete from tbl_expense1 where expense_id=" + parseInt(txtno.getText());
+            System.out.println(query);
+            Connection(query);
+            String query1 = "delete/Delete from tbl_expense2 where expense_Fkid=" + parseInt(txtno.getText());
+            System.out.println(query1);
+            Connection(query1);
+        } catch (IOException ex) {
+            System.out.println("Doesnt execute the query");
+=======
+>>>>>>> Stashed changes
        try {
             String query = "delete/Delete from tbl_expense1 where expense_id="+parseInt(txtno.getText());
             System.out.println(query);
@@ -405,6 +482,10 @@ public class frmexpense extends javax.swing.JFrame {
                 Connection(query1);
         } catch (IOException ex) {
             Logger.getLogger(frmcompany.class.getName()).log(Level.SEVERE, null, ex);
+<<<<<<< Updated upstream
+=======
+>>>>>>> 7eea732bffef185893ab84ed0e1dcb7a72f1c859
+>>>>>>> Stashed changes
         }
     }//GEN-LAST:event_btndeleteActionPerformed
 
@@ -414,7 +495,7 @@ public class frmexpense extends javax.swing.JFrame {
     }//GEN-LAST:event_btnresetMouseEntered
 
     private void btnresetMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnresetMouseExited
-        btnreset.setBackground(new Color(255,255,255));
+        btnreset.setBackground(new Color(255, 255, 255));
         btnreset.setForeground(Color.black);
     }//GEN-LAST:event_btnresetMouseExited
 
@@ -423,27 +504,49 @@ public class frmexpense extends javax.swing.JFrame {
     }//GEN-LAST:event_btnresetActionPerformed
 
     private void btnupdateMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnupdateMouseEntered
-       btnupdate.setBackground(new Color(54, 33, 89));
+        btnupdate.setBackground(new Color(54, 33, 89));
         btnupdate.setForeground(Color.white);
     }//GEN-LAST:event_btnupdateMouseEntered
 
     private void btnupdateMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnupdateMouseExited
-       btnupdate.setBackground(new Color(255,255,255));
+        btnupdate.setBackground(new Color(255, 255, 255));
         btnupdate.setForeground(Color.black);
     }//GEN-LAST:event_btnupdateMouseExited
 
     private void btnupdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnupdateActionPerformed
         try {
+<<<<<<< Updated upstream
+=======
+<<<<<<< HEAD
+            String query = "update/Update tbl_expense1 set expense_date='" + txtdate.getText() + "' where expense_id=" + Integer.parseInt(txtno.getText());
+            System.out.println(query);
+            Connection(query);
+            for (int i = 0; i < tblexpense2.getRowCount(); i++) {
+                String query1 = "update/update tbl_expense2 Set expense_description='" + model.getValueAt(i, 0).toString() + "',expense_amount='" + model.getValueAt(i, 1).toString() + "' where expense_Fkid=" + parseInt(txtno.getText());
+=======
+>>>>>>> Stashed changes
             String query = "update/Update tbl_expense1 set expense_date='"+txtdate.getText()+"' where expense_id="+parseInt(txtno.getText());
             System.out.println(query);
             Connection(query);
             for(int i=0;i<tblexpense2.getRowCount();i++){
             String query1 = "update/update tbl_expense2 Set expense_description='" + model.getValueAt(i, 0).toString() + "',expense_amount='" + model.getValueAt(i, 1).toString() + "' where expense_Fkid="+parseInt(txtno.getText());    
+<<<<<<< Updated upstream
+=======
+>>>>>>> 7eea732bffef185893ab84ed0e1dcb7a72f1c859
+>>>>>>> Stashed changes
                 System.out.println(query1);
                 Connection(query1);
             }
         } catch (IOException ex) {
+<<<<<<< Updated upstream
             Logger.getLogger(frmcompany.class.getName()).log(Level.SEVERE, null, ex);
+=======
+<<<<<<< HEAD
+            System.out.println("Doesnt execute the query");
+=======
+            Logger.getLogger(frmcompany.class.getName()).log(Level.SEVERE, null, ex);
+>>>>>>> 7eea732bffef185893ab84ed0e1dcb7a72f1c859
+>>>>>>> Stashed changes
         }
     }//GEN-LAST:event_btnupdateActionPerformed
 
@@ -469,7 +572,15 @@ public class frmexpense extends javax.swing.JFrame {
 
     private void txtamountKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtamountKeyPressed
         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+<<<<<<< Updated upstream
         model.insertRow(model.getRowCount(), new Object[]{txtdescription.getText(), txtamount.getText()});
+=======
+<<<<<<< HEAD
+            model.insertRow(model.getRowCount(), new Object[]{txtdescription.getText(), txtamount.getText()});
+=======
+        model.insertRow(model.getRowCount(), new Object[]{txtdescription.getText(), txtamount.getText()});
+>>>>>>> 7eea732bffef185893ab84ed0e1dcb7a72f1c859
+>>>>>>> Stashed changes
         }
     }//GEN-LAST:event_txtamountKeyPressed
 

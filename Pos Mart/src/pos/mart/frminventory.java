@@ -43,17 +43,6 @@ public class frminventory extends javax.swing.JFrame {
         btnreset.setBackground(Color.white);
         
     }
-//public String Connection(String data) throws IOException {
-//        DataOutputStream outToServer
-//                = new DataOutputStream(clientSocket.getOutputStream());
-//
-//        BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-//
-//        outToServer.writeBytes(data + '\n');
-//        String s=inFromServer.readLine();
-//        return s;
-//
-//    }
 
     String fkConnection(String data){
         String s = null;

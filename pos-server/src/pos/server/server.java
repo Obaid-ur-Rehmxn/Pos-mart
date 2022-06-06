@@ -20,6 +20,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -35,7 +36,9 @@ import static javax.swing.UIManager.getString;
  */
 public class server {
 
-    public void serverside() throws IOException, Exception {
+    String s;
+
+    void serverside() throws IOException, Exception {
         String clientdata = "";
         String status = "";
         ServerSocket welcomeSocket = new ServerSocket(9999);
@@ -47,40 +50,77 @@ public class server {
             clientdata = inFromClient.readLine();
             System.out.println(clientdata);
             String data[] = clientdata.split("/");
-                 if(data[0].equalsIgnoreCase("login"))
-                 {
-                    System.out.println("k5");
-                     String username=data[1];
-                     String userpass=data[2];           
-                     status=login_validation(username,userpass);
-                     outToClient.writeBytes(status + '\n');
-                 }
-                 else if(data[0].equalsIgnoreCase("fkcompany")){
-                 int a=0;
-                 String qwe=data[1];
-                     Connection con = DriverManager.getConnection(ConnectionClass.conString);
-                     PreparedStatement pst = con.prepareStatement(qwe);
-                     ResultSet rs=pst.executeQuery();
-                    while(rs.next()){
-                    a=rs.getInt(1);
+            if (data[0].equalsIgnoreCase("login")) 
+            {
+                System.out.println("k5");
+                String username = data[1];
+                String userpass = data[2];
+                status = login_validation(username, userpass);
+                outToClient.writeBytes(status + '\n');
+                connectionSocket.close();
+            } 
+            else if (data[0].equalsIgnoreCase("fkcompany"))
+            {
+                int a = 0;
+                String qwe = data[1];
+                Connection con = DriverManager.getConnection(ConnectionClass.conString);
+                PreparedStatement pst = con.prepareStatement(qwe);
+                ResultSet rs = pst.executeQuery();
+                while (rs.next()) {
+                    a = rs.getInt(1);
                     System.out.println(a);
                 }
-                String b=String.valueOf(a);
+                String b = String.valueOf(a);
                 con.close();
-                outToClient.writeBytes(b+'\n');
-                 }
-                 else if(data[0].equalsIgnoreCase("insert") || data[0].equalsIgnoreCase("update") || data[0].equalsIgnoreCase("delete")){
-            String qwe=data[1];
-            Connection con = DriverManager.getConnection(ConnectionClass.conString);
-            PreparedStatement pst = con.prepareStatement(qwe);
-            boolean abc = pst.execute();
-            System.out.println(abc);
-            con.close();
-                 }          
+                outToClient.writeBytes(b + '\n');
+                connectionSocket.close();
+            } 
+            else if (data[0].equalsIgnoreCase("insert") || data[0].equalsIgnoreCase("update") || data[0].equalsIgnoreCase("delete")) {
+                String qwe = data[1];
+                Connection con = DriverManager.getConnection(ConnectionClass.conString);
+                PreparedStatement pst = con.prepareStatement(qwe);
+                boolean abc = pst.execute();
+                System.out.println(abc);
+                String q=String.valueOf(abc);
+                con.close();
+                outToClient.writeBytes(q + '\n');
+                connectionSocket.close();
+            } 
+            else if (clientdata.equals("tbl_inventory")) {
+                s = clientdata;
+                getDataFromInventory(clientdata);
+                outToClient.writeBytes("filecreated" + '\n');
+                connectionSocket.close();
+                String path = s + ".txt";
+        while (true) {     
+            Socket sr = welcomeSocket.accept();
+            FileInputStream fr = new FileInputStream(path);
+            byte b[] = new byte[2002];
+            fr.read(b, 0, b.length);
+            OutputStream os = sr.getOutputStream();
+            os.write(b, 0, b.length);
+        }
+            }
+             else if (clientdata.equals("tbl_company")) {
+                s = clientdata;
+                getDataFromCompany(clientdata);
+                outToClient.writeBytes("filecreated" + '\n');
+                connectionSocket.close();
+                String path = s + ".txt";
+                Socket sr;
+        while (true) {
+            sr = welcomeSocket.accept();
+            FileInputStream fr = new FileInputStream(path);
+            byte b[] = new byte[2002];
+            fr.read(b, 0, b.length);
+            OutputStream os = sr.getOutputStream();
+            os.write(b, 0, b.length);
+        }
+       }
         }
     }
-    
-    public String login_validation(String username, String userpass) throws SQLException {
+
+    String login_validation(String username, String userpass) throws SQLException {
         String status = "invalid";
         Connection con = DriverManager.getConnection(ConnectionClass.conString);
         PreparedStatement statement = con.prepareStatement("SELECT * FROM tbl_users");
@@ -95,58 +135,91 @@ public class server {
         return status;
     }
 
-    public void getDataFromUsers() throws SQLException, IOException {
-        String data = "";
-        String path = "C:\\Users\\Jamal\\Desktop\\nabeel.txt";
+//    public void checkrows(String table) throws SQLException, IOException{
+//        System.out.println("into check");
+//        Connection con = DriverManager.getConnection(ConnectionClass.conString);
+//        PreparedStatement statement = con.prepareStatement("SELECT count(*) FROM "+table);
+//        ResultSet rs = statement.executeQuery();
+//        ResultSetMetaData rsmd = (ResultSetMetaData) rs.getMetaData();
+//         int numberOfColumn = rsmd.getColumnCount()
+//        System.out.println(count);
+//      getDataFromTables(count,table);
+//    }
+    String getDataFromInventory(String table) throws SQLException, IOException {
+        String[] data = {"", "", "", "", "", "", "", "", ""};
+        String fileData = "";
+        String path = table + ".txt";
+        FileWriter myWriter = new FileWriter(path);
+        myWriter.write("");
+        myWriter.close();
+        FileWriter file = new FileWriter(path);
         Connection con = DriverManager.getConnection(ConnectionClass.conString);
-        PreparedStatement statement = con.prepareStatement("SELECT * FROM tbl_users");
+        PreparedStatement statement = con.prepareStatement("SELECT * FROM " + table);
         ResultSet rs = statement.executeQuery();
         while (rs.next()) {
-            String b = rs.getString(2);
-            String c = rs.getString(3);
-            data = b.concat("," + c);
-            writeTextToFile(data, path);
+            data[0] = rs.getString("inventory_barcode");
+            data[1] = rs.getString("inventory_name");
+            data[2] = rs.getString("inventory_saleprice");
+            data[3] = rs.getString("inventory_saledisc");
+            data[4] = rs.getString("inventory_saletax");
+            data[5] = rs.getString("inventory_purchaseprice");
+            data[6] = rs.getString("inventory_purchasedisc");
+            data[7] = rs.getString("inventory_purchasetax");
+            fileData = data[0].concat("," + data[1]).concat("," + data[2]).concat("," + data[3]).concat("," + data[4]).concat("," + data[5]).concat("," + data[6]).concat("," + data[7]);
+            System.out.println(fileData);    
+        file.write(fileData);
+        file.write("\n");
         }
-        con.close();
-        sendFile(path);
-    }
-
-    public void writeTextToFile(String data, String path) throws IOException {
-        FileWriter file = new FileWriter(path, true);
-        BufferedWriter myWriter = new BufferedWriter(file);
-        myWriter.write(data);
-        myWriter.newLine();
-        myWriter.close();
         file.close();
+        con.close();
+        return fileData;
     }
-
-    public void sendFile(String path) throws IOException {
-        path = "C:\\Users\\Jamal\\Desktop\\nabeel.txt";
-        ServerSocket s = new ServerSocket(4333);
-        while (true) {
-            Socket sr = s.accept();
+    
+    String getDataFromCompany(String table) throws SQLException, IOException {
+        System.out.println("company");
+        String[] data = {"", "", ""};
+        String fileData = " ";
+        String path = table + ".txt";
+        FileWriter myWriter = new FileWriter(path);
+        myWriter.write("");
+        myWriter.close();
+        FileWriter file = new FileWriter(path);
+        Connection con = DriverManager.getConnection(ConnectionClass.conString);
+        PreparedStatement statement = con.prepareStatement("SELECT * FROM " + table);
+        ResultSet rs = statement.executeQuery();
+        while (rs.next()) {
+            data[0] = rs.getString("company_id");
+            data[1] = rs.getString("company_name");
+            data[2] = rs.getString("company_shortname");
+            fileData = data[0].concat("," + data[1]).concat("," + data[2]);
+            System.out.println(fileData);    
+        file.write(fileData);
+        file.write("\n");
+        }
+        file.close();
+        con.close();
+        return fileData;
+    }
+    
+    void sendFile(String table) throws IOException {
+        String path = table + ".txt";
+        ServerSocket s = new ServerSocket(9999);
+        while (true) {     
+        Socket sr = s.accept();
             FileInputStream fr = new FileInputStream(path);
             byte b[] = new byte[2002];
             fr.read(b, 0, b.length);
             OutputStream os = sr.getOutputStream();
             os.write(b, 0, b.length);
-        }
+        }  
     }
 
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) throws SQLException, IOException, Exception {
-        server s = new server();
+    public static void main(String[] args) throws Exception {
+        server s=new server();
         s.serverside();
-//          s.comp();
-//    try {
-//        server s=new server();
-//        
-//s.basicSqlFunctions("insert into test values("+63434+",'sprite',"+"'spr')");
-//    } catch (Exception ex) {
-//        Logger.getLogger(server.class.getName()).log(Level.SEVERE, null, ex);
-//    }
 
     }
 }

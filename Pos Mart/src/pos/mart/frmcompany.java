@@ -9,12 +9,16 @@ import java.awt.Color;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
+import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import static java.lang.Integer.parseInt;
 import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -43,21 +47,21 @@ public class frmcompany extends javax.swing.JFrame {
     }
 
     public frmcompany() {
-        initComponents();
-        this.getContentPane().setBackground(Color.white);
-        this.setResizable(false);
-        DefaultTableCellRenderer MyHeaderRender = new DefaultTableCellRenderer();
-        MyHeaderRender.setBackground(new Color(54, 33, 89));
-        MyHeaderRender.setForeground(new Color(255, 255, 255));
-        tblcompany.getTableHeader().getColumnModel().getColumn(0).setHeaderRenderer(MyHeaderRender);
-        tblcompany.getTableHeader().getColumnModel().getColumn(1).setHeaderRenderer(MyHeaderRender);
-        tblcompany.getTableHeader().getColumnModel().getColumn(2).setHeaderRenderer(MyHeaderRender);
-        txtname.requestFocus();
-        btnAdd.setBackground(Color.white);
-        btnupdate.setBackground(Color.white);
-        btndelete.setBackground(Color.white);
-        btnreset.setBackground(Color.white);
-    }
+            initComponents();
+            this.getContentPane().setBackground(Color.white);
+            this.setResizable(false);
+            DefaultTableCellRenderer MyHeaderRender = new DefaultTableCellRenderer();
+            MyHeaderRender.setBackground(new Color(54, 33, 89));
+            MyHeaderRender.setForeground(new Color(255, 255, 255));
+            tblcompany.getTableHeader().getColumnModel().getColumn(0).setHeaderRenderer(MyHeaderRender);
+            tblcompany.getTableHeader().getColumnModel().getColumn(1).setHeaderRenderer(MyHeaderRender);
+            tblcompany.getTableHeader().getColumnModel().getColumn(2).setHeaderRenderer(MyHeaderRender);
+            txtname.requestFocus();
+            btnAdd.setBackground(Color.white);
+            btnupdate.setBackground(Color.white);
+            btndelete.setBackground(Color.white);
+            btnreset.setBackground(Color.white);
+             }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -84,6 +88,7 @@ public class frmcompany extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         txtshortname = new javax.swing.JTextField();
+        jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -204,11 +209,11 @@ public class frmcompany extends javax.swing.JFrame {
                 txtsearchActionPerformed(evt);
             }
         });
-        getContentPane().add(txtsearch, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 80, 190, 25));
+        getContentPane().add(txtsearch, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 80, 190, 25));
 
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel2.setText("Search");
-        getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 80, 50, 25));
+        getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 80, 50, 25));
 
         txtno.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -242,6 +247,14 @@ public class frmcompany extends javax.swing.JFrame {
             }
         });
         getContentPane().add(txtshortname, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 280, 190, 25));
+
+        jButton1.setText("Import");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+        getContentPane().add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(600, 80, 70, -1));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -334,6 +347,31 @@ public class frmcompany extends javax.swing.JFrame {
 
     }//GEN-LAST:event_btndeleteActionPerformed
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        try{
+        Connection("tbl_company");
+            System.out.println("connection performed");
+            byte []b=new byte[2002];
+            Socket sr=new Socket("localhost",9999);
+            InputStream is =sr.getInputStream();
+            FileOutputStream fr=new FileOutputStream("tbl_company.txt");
+//            fr.write(0);
+            is.read(b, 0, b.length);
+            fr.write(b, 0, b.length);
+            sr.close();
+            BufferedReader br = new BufferedReader(new FileReader("tbl_company.txt"));
+            DefaultTableModel model = (DefaultTableModel) tblcompany.getModel();
+            Object[] tableLines = br.lines().toArray();
+            for (int i = 0; i < tableLines.length-1; i++) {
+                String line = tableLines[i].toString().trim();
+                String[] dataRow = line.split(",");
+                model.addRow(dataRow);
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(frmcompany.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jButton1ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -374,6 +412,7 @@ public class frmcompany extends javax.swing.JFrame {
     private javax.swing.JButton btndelete;
     private javax.swing.JButton btnreset;
     private javax.swing.JButton btnupdate;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
