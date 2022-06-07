@@ -75,12 +75,7 @@ public class frmexpense extends javax.swing.JFrame {
     void serialno() throws IOException{
         String sql="serialno/SELECT IDENT_CURRENT('tbl_expense1')";
         Connection(sql);
-        if (s.equals("1")) {
-            txtno.setText(String.valueOf(s));
-        }
-        else{
         txtno.setText(String.valueOf(parseInt(s)+1));
-    }
     }
     
     void showData(){

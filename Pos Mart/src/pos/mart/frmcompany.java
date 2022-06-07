@@ -29,14 +29,16 @@ public class frmcompany extends javax.swing.JFrame {
     Socket clientSocket;
     frmLogin f = new frmLogin();
     String fromServer;
+
     /**
      * Creates new form frmcompany
+     *
      * @param data
-     * @return 
-     * @throws java.io.IOException 
+     * @return
+     * @throws java.io.IOException
      */
     public String Connection(String data) throws IOException {
-        
+
         clientSocket = new Socket("localhost", 9999);
 
         DataOutputStream outToServer
@@ -45,18 +47,18 @@ public class frmcompany extends javax.swing.JFrame {
         BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 
         outToServer.writeBytes(data + '\n');
-        fromServer=inFromServer.readLine();
+        fromServer = inFromServer.readLine();
         return "ok";
     }
-    
-    void showData(){
-    try{
-        Connection("tbl_company");
+
+    void showData() {
+        try {
+            Connection("tbl_company");
             System.out.println("connection performed");
-            byte []b=new byte[2002];
-            Socket sr=new Socket("localhost",9999);
-            InputStream is =sr.getInputStream();
-            FileOutputStream fr=new FileOutputStream("tbl_company.txt");
+            byte[] b = new byte[2002];
+            Socket sr = new Socket("localhost", 9999);
+            InputStream is = sr.getInputStream();
+            FileOutputStream fr = new FileOutputStream("tbl_company.txt");
 //            fr.write(0);
             is.read(b, 0, b.length);
             fr.write(b, 0, b.length);
@@ -69,7 +71,7 @@ public class frmcompany extends javax.swing.JFrame {
             for (int i = model.getRowCount() - 1; i >= 0; i--) {
                 model.removeRow(i);
             }
-            for (int i = 0; i < tableLines.length-1; i++) {
+            for (int i = 0; i < tableLines.length - 1; i++) {
                 String line = tableLines[i].toString().trim();
                 String[] dataRow = line.split(",");
                 model.addRow(dataRow);
@@ -78,14 +80,14 @@ public class frmcompany extends javax.swing.JFrame {
             Logger.getLogger(frmcompany.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    void serialno() throws IOException{
-        String sql="serialno/SELECT IDENT_CURRENT('tbl_company')";
+
+    void serialno() throws IOException {
+        String sql = "serialno/SELECT IDENT_CURRENT('tbl_company')";
         Connection(sql);
-        txtno.setText(String.valueOf(parseInt(fromServer)+1));
+        txtno.setText(String.valueOf(parseInt(fromServer) + 1));
     }
-    
-    void clearFields() throws IOException{
+
+    void clearFields() throws IOException {
         txtname.setText("");
         txtshortname.setText("");
         txtsearch.setText("");
@@ -93,23 +95,24 @@ public class frmcompany extends javax.swing.JFrame {
         showData();
         serialno();
     }
+
     public frmcompany() throws IOException {
-            initComponents();
-            this.getContentPane().setBackground(Color.white);
-            this.setResizable(false);
-            DefaultTableCellRenderer MyHeaderRender = new DefaultTableCellRenderer();
-            MyHeaderRender.setBackground(new Color(54, 33, 89));
-            MyHeaderRender.setForeground(new Color(255, 255, 255));
-            tblcompany.getTableHeader().getColumnModel().getColumn(0).setHeaderRenderer(MyHeaderRender);
-            tblcompany.getTableHeader().getColumnModel().getColumn(1).setHeaderRenderer(MyHeaderRender);
-            tblcompany.getTableHeader().getColumnModel().getColumn(2).setHeaderRenderer(MyHeaderRender);
-            txtname.requestFocus();
-            btnAdd.setBackground(Color.white);
-            btnupdate.setBackground(Color.white);
-            btndelete.setBackground(Color.white);
-            btnreset.setBackground(Color.white);
-            clearFields();
-             }
+        initComponents();
+        this.getContentPane().setBackground(Color.white);
+        this.setResizable(false);
+        DefaultTableCellRenderer MyHeaderRender = new DefaultTableCellRenderer();
+        MyHeaderRender.setBackground(new Color(54, 33, 89));
+        MyHeaderRender.setForeground(new Color(255, 255, 255));
+        tblcompany.getTableHeader().getColumnModel().getColumn(0).setHeaderRenderer(MyHeaderRender);
+        tblcompany.getTableHeader().getColumnModel().getColumn(1).setHeaderRenderer(MyHeaderRender);
+        tblcompany.getTableHeader().getColumnModel().getColumn(2).setHeaderRenderer(MyHeaderRender);
+        txtname.requestFocus();
+        btnAdd.setBackground(Color.white);
+        btnupdate.setBackground(Color.white);
+        btndelete.setBackground(Color.white);
+        btnreset.setBackground(Color.white);
+        clearFields();
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.

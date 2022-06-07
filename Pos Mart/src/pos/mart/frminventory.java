@@ -101,12 +101,7 @@ public class frminventory extends javax.swing.JFrame {
     void serialno() throws IOException{
         String sql="serialno/SELECT IDENT_CURRENT('tbl_inventory')";
         fkConnection(sql);
-        if (company==1) {
-         txtno.setText(String.valueOf(company));   
-        }
-        else{
         txtno.setText(String.valueOf(company+1));
-        }
         }
 
     void clearFields() throws IOException {

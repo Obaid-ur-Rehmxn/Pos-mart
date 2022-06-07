@@ -23,6 +23,7 @@ import javax.swing.JLabel;
 public class frmLogin extends javax.swing.JFrame {
  Socket clientSocket;
  private String Data;
+ public static String user;
     /**
      * Creates new form frmLogin
      */
@@ -189,6 +190,7 @@ public class frmLogin extends javax.swing.JFrame {
         String Data=("login/").concat(username).concat("/").concat(password); 
         String returnData=Connection(Data);
         if(returnData.equals("valid")){
+            user=txtusername.getText();
              frmdashboard go=new frmdashboard();
         go.setVisible(true);
         this.setVisible(false);
