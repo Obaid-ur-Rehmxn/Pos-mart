@@ -88,7 +88,7 @@ CREATE TABLE tbl_purchase1 (
 CREATE TABLE tbl_purchase2 (
   purchase_serialno int NOT NULL primary key identity(1,1),
   purchase_Fkid int NOT NULL,
-  purchase_Fkproduct int NOT NULL,
+  purchase_Fkproduct varchar(1000) NOT NULL,
   purchase_price int DEFAULT NULL,
   purchase_disc int DEFAULT NULL,
   purchase_tax int DEFAULT NULL,
@@ -118,7 +118,7 @@ CREATE TABLE tbl_sales1 (
 CREATE TABLE tbl_sales2 (
   sales_serialno int NOT NULL primary key identity(1,1),
   sales_Fkid int NOT NULL,
-  sales_Fkproduct int NOT NULL,
+  sales_Fkproduct varchar(1000) NOT NULL,
   sales_price int NOT NULL,
   sales_disc int DEFAULT NULL,
   sales_tax int DEFAULT NULL,
@@ -139,14 +139,17 @@ CREATE TABLE tbl_users (
 Select * from tbl_users
 Select * from tbl_company
 Select * from tbl_inventory
-Select * from tbl_expense1,tbl_expense2
-Select * from tbl_sales1,tbl_sales2
-Select * from tbl_purchase1,tbl_purchase2
+Select * from tbl_expense1
+Select * from tbl_expense2
+Select * from tbl_sales1
+Select * from tbl_sales2
+Select * from tbl_purchase1
+Select * from tbl_purchase2
 
 ALTER TABLE tbl_purchase2 ADD FOREIGN KEY (purchase_Fkid) REFERENCES tbl_purchase1(purcahse_id) on DELETE No action on UPDATE CASCADE
 ALTER TABLE tbl_inventory ADD FOREIGN KEY (inventory_Fkcompany) REFERENCES tbl_company(company_id) on DELETE No action on UPDATE CASCADE
-ALTER TABLE tbl_purchase2 ADD FOREIGN KEY (purchase_Fkproduct) REFERENCES tbl_inventory(inventory_id) on DELETE No action on UPDATE CASCADE
 ALTER TABLE tbl_sales2 ADD FOREIGN KEY (sales_Fkid) REFERENCES tbl_sales1(sales_id) on DELETE No action on UPDATE CASCADE
-ALTER TABLE tbl_sales2 ADD FOREIGN KEY (sales_Fkproduct) REFERENCES tbl_inventory(inventory_id) on DELETE No action on UPDATE CASCADE
 ALTER TABLE tbl_expense2 ADD FOREIGN KEY (expense_Fkid) REFERENCES tbl_expense1(expense_id) on DELETE No action on UPDATE CASCADE
+
+
 

@@ -57,6 +57,7 @@ public class frmproduct extends javax.swing.JFrame {
         tblproduct.getColumnModel().getColumn(5).setPreferredWidth(70);
         tblproduct.getColumnModel().getColumn(6).setPreferredWidth(56);
         tblproduct.getColumnModel().getColumn(7).setPreferredWidth(56);
+        showData();
     }
 
     String Connection(String data) throws IOException {
@@ -78,7 +79,7 @@ public class frmproduct extends javax.swing.JFrame {
         return modifiedSentence;
     }
 
-    void showData() {
+    private void showData() {
         try {
             Connection("tbl_inventory");
             byte[] b = new byte[2002];
@@ -222,7 +223,7 @@ public class frmproduct extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        showData();
+       
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void formWindowActivated(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowActivated

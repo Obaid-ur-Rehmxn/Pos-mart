@@ -31,10 +31,11 @@ import javax.swing.table.DefaultTableModel;
 public class frmexpense extends javax.swing.JFrame {
     DefaultTableModel model;
     Socket clientSocket;
+    String s;
     /**
      * Creates new form frmexpense
      */
-    public frmexpense() {
+    public frmexpense() throws IOException {
         initComponents();
         this.getContentPane().setBackground(Color.white);
         this.setResizable(false);
@@ -68,8 +69,18 @@ public class frmexpense extends javax.swing.JFrame {
         BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 
         outToServer.writeBytes(data + '\n');
-        String s=inFromServer.readLine();
+        s=inFromServer.readLine();
         return s;    
+    }
+    void serialno() throws IOException{
+        String sql="serialno/SELECT IDENT_CURRENT('tbl_expense1')";
+        Connection(sql);
+        if (s.equals("1")) {
+            txtno.setText(String.valueOf(s));
+        }
+        else{
+        txtno.setText(String.valueOf(parseInt(s)+1));
+    }
     }
     
     void showData(){
@@ -80,7 +91,6 @@ public class frmexpense extends javax.swing.JFrame {
             Socket sr=new Socket("localhost",9999);
             InputStream is =sr.getInputStream();
             FileOutputStream fr=new FileOutputStream("tbl_expense.txt");
-//            fr.write(0);
             is.read(b, 0, b.length);
             fr.write(b, 0, b.length);
             is.close();
@@ -102,7 +112,7 @@ public class frmexpense extends javax.swing.JFrame {
         }
     }
 
-    void clearFields(){
+    void clearFields() throws IOException{
     txtdescription.setText("");
     txtamount.setText("");
     txtttlamount.setText("");
@@ -110,6 +120,8 @@ public class frmexpense extends javax.swing.JFrame {
     for (int i = model.getRowCount() - 1; i >= 0; i--) {
                 model.removeRow(i);
             }
+    showData();
+    serialno();
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -138,7 +150,6 @@ public class frmexpense extends javax.swing.JFrame {
         txtdescription = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
         txtttlamount = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -325,22 +336,13 @@ public class frmexpense extends javax.swing.JFrame {
             }
         });
 
-        jButton1.setText("Import");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 216, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 216, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
@@ -380,15 +382,14 @@ public class frmexpense extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtno, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtdate, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(txtno, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtdate, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(txtamount, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(txtdescription, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -398,7 +399,7 @@ public class frmexpense extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(txtttlamount, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 440, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 477, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -430,7 +431,6 @@ public class frmexpense extends javax.swing.JFrame {
                 System.out.println(query1);
                 Connection(query1);
             }
-            showData();
             clearFields();
         } catch (IOException ex) {
             System.out.println("Doesnt execute the query");
@@ -456,7 +456,6 @@ public class frmexpense extends javax.swing.JFrame {
             String query1 = "delete/Delete from tbl_expense2 where expense_Fkid=" + parseInt(txtno.getText());
             System.out.println(query1);
             Connection(query1);
-            showData();
             clearFields();
         } catch (IOException ex) {
             System.out.println("Doesnt execute the query");
@@ -474,7 +473,11 @@ public class frmexpense extends javax.swing.JFrame {
     }//GEN-LAST:event_btnresetMouseExited
 
     private void btnresetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnresetActionPerformed
-        clearFields();
+        try {
+            clearFields();
+        } catch (IOException ex) {
+            Logger.getLogger(frmexpense.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_btnresetActionPerformed
 
     private void btnupdateMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnupdateMouseEntered
@@ -497,7 +500,6 @@ public class frmexpense extends javax.swing.JFrame {
                 System.out.println(query1);
                 Connection(query1);
             }
-            showData();
             clearFields();
         } catch (IOException ex) {
             System.out.println("Doesnt execute the query");
@@ -539,10 +541,6 @@ public class frmexpense extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_txtamountKeyPressed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-    showData();
-    }//GEN-LAST:event_jButton1ActionPerformed
-
     /**
      * @param args the command line arguments
      */
@@ -573,7 +571,11 @@ public class frmexpense extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new frmexpense().setVisible(true);
+                try {
+                    new frmexpense().setVisible(true);
+                } catch (IOException ex) {
+                    Logger.getLogger(frmexpense.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
     }
@@ -583,7 +585,6 @@ public class frmexpense extends javax.swing.JFrame {
     private javax.swing.JButton btndelete;
     private javax.swing.JButton btnreset;
     private javax.swing.JButton btnupdate;
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

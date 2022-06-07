@@ -28,7 +28,7 @@ public class frmcompany extends javax.swing.JFrame {
 
     Socket clientSocket;
     frmLogin f = new frmLogin();
-
+    String fromServer;
     /**
      * Creates new form frmcompany
      * @param data
@@ -36,7 +36,7 @@ public class frmcompany extends javax.swing.JFrame {
      * @throws java.io.IOException 
      */
     public String Connection(String data) throws IOException {
-
+        
         clientSocket = new Socket("localhost", 9999);
 
         DataOutputStream outToServer
@@ -45,7 +45,7 @@ public class frmcompany extends javax.swing.JFrame {
         BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 
         outToServer.writeBytes(data + '\n');
-
+        fromServer=inFromServer.readLine();
         return "ok";
     }
     
@@ -79,13 +79,21 @@ public class frmcompany extends javax.swing.JFrame {
         }
     }
     
-    void clearFields(){
+    void serialno() throws IOException{
+        String sql="serialno/SELECT IDENT_CURRENT('tbl_company')";
+        Connection(sql);
+        txtno.setText(String.valueOf(parseInt(fromServer)+1));
+    }
+    
+    void clearFields() throws IOException{
         txtname.setText("");
         txtshortname.setText("");
         txtsearch.setText("");
         txtname.requestFocus();
+        showData();
+        serialno();
     }
-    public frmcompany() {
+    public frmcompany() throws IOException {
             initComponents();
             this.getContentPane().setBackground(Color.white);
             this.setResizable(false);
@@ -128,7 +136,6 @@ public class frmcompany extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         txtshortname = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -254,11 +261,11 @@ public class frmcompany extends javax.swing.JFrame {
                 txtsearchActionPerformed(evt);
             }
         });
-        getContentPane().add(txtsearch, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 80, 190, 25));
+        getContentPane().add(txtsearch, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 80, 190, 25));
 
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel2.setText("Search");
-        getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 80, 50, 25));
+        getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 80, 50, 25));
 
         txtno.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -293,14 +300,6 @@ public class frmcompany extends javax.swing.JFrame {
         });
         getContentPane().add(txtshortname, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 280, 190, 25));
 
-        jButton1.setText("Import");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
-        getContentPane().add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(600, 80, 70, -1));
-
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
@@ -319,7 +318,6 @@ public class frmcompany extends javax.swing.JFrame {
             int srno = parseInt(txtno.getText());
             String query = "update/update tbl_company set company_name='" + txtname.getText() + "',company_shortname='" + txtshortname.getText() + "' where company_id=" + srno;
             f.Connection(query);
-            showData();
             clearFields();
         } catch (IOException ex) {
             Logger.getLogger(frmcompany.class.getName()).log(Level.SEVERE, null, ex);
@@ -331,7 +329,6 @@ public class frmcompany extends javax.swing.JFrame {
         try {
             String query = "insert/insert into tbl_company (company_name,company_shortname) values ('" + txtname.getText() + "','" + txtshortname.getText() + "')";
             f.Connection(query);
-            showData();
             clearFields();
         } catch (IOException ex) {
             Logger.getLogger(frmcompany.class.getName()).log(Level.SEVERE, null, ex);
@@ -390,7 +387,6 @@ public class frmcompany extends javax.swing.JFrame {
             int srno = parseInt(txtno.getText());
             String query = "delete/delete from tbl_company where company_id=" + srno;
             f.Connection(query);
-            showData();
             clearFields();
         } catch (IOException ex) {
             Logger.getLogger(frmcompany.class.getName()).log(Level.SEVERE, null, ex);
@@ -398,12 +394,12 @@ public class frmcompany extends javax.swing.JFrame {
 
     }//GEN-LAST:event_btndeleteActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        showData();
-    }//GEN-LAST:event_jButton1ActionPerformed
-
     private void btnresetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnresetActionPerformed
-    clearFields();
+        try {
+            clearFields();
+        } catch (IOException ex) {
+            Logger.getLogger(frmcompany.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_btnresetActionPerformed
 
     /**
@@ -436,7 +432,11 @@ public class frmcompany extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new frmcompany().setVisible(true);
+                try {
+                    new frmcompany().setVisible(true);
+                } catch (IOException ex) {
+                    Logger.getLogger(frmcompany.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
     }
@@ -446,7 +446,6 @@ public class frmcompany extends javax.swing.JFrame {
     private javax.swing.JButton btndelete;
     private javax.swing.JButton btnreset;
     private javax.swing.JButton btnupdate;
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

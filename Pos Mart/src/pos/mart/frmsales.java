@@ -6,19 +6,37 @@
 package pos.mart;
 
 import java.awt.Color;
+import java.awt.event.KeyEvent;
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import static java.lang.Integer.parseInt;
+import java.net.Socket;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
  * @author Obaid
  */
 public class frmsales extends javax.swing.JFrame {
-
+    DefaultTableModel model;
+    Socket clientSocket;
+    String s;
     /**
      * Creates new form frmexpense
      */
-    public frmsales() {
+    public frmsales() throws IOException {
         initComponents();
         this.getContentPane().setBackground(Color.white);
         this.setResizable(false);
@@ -42,8 +60,92 @@ public class frmsales extends javax.swing.JFrame {
         tblsales2.getColumnModel().getColumn(0).setPreferredWidth(56);
         tblsales2.getColumnModel().getColumn(0).setPreferredWidth(56);
         tblsales2.getColumnModel().getColumn(0).setPreferredWidth(69);
+         model = (DefaultTableModel) tblsales2.getModel();
+        DateFormat datefor = new SimpleDateFormat("YYYY-MM-dd");
+        Date date = new Date();
+        txtdate.setText(datefor.format(date));
+        btnAdd.setBackground(Color.white);
+        btnupdate.setBackground(Color.white);
+        btndelete.setBackground(Color.white);
+        btnreset.setBackground(Color.white);
+        btnprint.setBackground(Color.white);
+        clearFields();
     }
+    
+    public String Connection(String data) throws IOException {
 
+        Socket clientSocket = new Socket("localhost", 9999);
+
+    
+        DataOutputStream outToServer
+                = new DataOutputStream(clientSocket.getOutputStream());
+
+        BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+
+        outToServer.writeBytes(data + '\n');
+        s=inFromServer.readLine();
+        return s;    
+    }
+    
+    void serialno() throws IOException{
+        String sql="serialno/SELECT IDENT_CURRENT('tbl_sales1')";
+        Connection(sql);
+        if (s.equals("1")) {
+            txtno.setText(String.valueOf(s));
+        }
+        else{
+        txtno.setText(String.valueOf(parseInt(s)+1));
+    }
+    }
+    
+    void showData(){
+    try{
+        Connection("tbl_sales");
+            System.out.println("connection performed");
+            byte []b=new byte[2002];
+            Socket sr=new Socket("localhost",9999);
+            InputStream is =sr.getInputStream();
+            FileOutputStream fr=new FileOutputStream("tbl_sales.txt");
+            is.read(b, 0, b.length);
+            fr.write(b, 0, b.length);
+            is.close();
+            fr.close();
+            sr.close();
+            BufferedReader br = new BufferedReader(new FileReader("tbl_sales.txt"));
+            DefaultTableModel model1 = (DefaultTableModel) tblsale1.getModel();
+            Object[] tableLines = br.lines().toArray();
+            for (int i = model1.getRowCount() - 1; i >= 0; i--) {
+                model1.removeRow(i);
+            }
+            for (int i = 0; i < tableLines.length-1; i++) {
+                String line = tableLines[i].toString().trim();
+                String[] dataRow = line.split(",");
+                model1.addRow(dataRow);
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(frmcompany.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    void clearFields() throws IOException{
+    txtname.setText("Cash Sale");
+    txtbarcode.setText("");
+    txtproname.setText("");
+    txtprice.setText("");
+    txtdisc.setText("");
+    txtstax.setText("");
+    txtqty.setText("");
+    txtamount.setText("");
+    txtttlamount.setText("");
+    txtreceivedamount.setText("");
+    txtchange.setText("");
+    txtbarcode.requestFocus();
+    for (int i = model.getRowCount() - 1; i >= 0; i--) {
+                model.removeRow(i);
+            }
+    showData();
+    serialno();
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -125,7 +227,6 @@ public class frmsales extends javax.swing.JFrame {
         });
         jScrollPane1.setViewportView(tblsale1);
 
-        btnAdd.setBackground(new java.awt.Color(255, 255, 255));
         btnAdd.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
         btnAdd.setText("ADD");
         btnAdd.setContentAreaFilled(false);
@@ -144,7 +245,6 @@ public class frmsales extends javax.swing.JFrame {
             }
         });
 
-        btndelete.setBackground(new java.awt.Color(255, 255, 255));
         btndelete.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
         btndelete.setText("DELETE");
         btndelete.setContentAreaFilled(false);
@@ -163,7 +263,6 @@ public class frmsales extends javax.swing.JFrame {
             }
         });
 
-        btnreset.setBackground(new java.awt.Color(255, 255, 255));
         btnreset.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
         btnreset.setText("RESET");
         btnreset.setContentAreaFilled(false);
@@ -182,7 +281,6 @@ public class frmsales extends javax.swing.JFrame {
             }
         });
 
-        btnupdate.setBackground(new java.awt.Color(255, 255, 255));
         btnupdate.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
         btnupdate.setText("UPDATE");
         btnupdate.setContentAreaFilled(false);
@@ -201,22 +299,18 @@ public class frmsales extends javax.swing.JFrame {
             }
         });
 
-        jLabel2.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel2.setText("Sr no");
 
-        txtno.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
         txtno.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtnoActionPerformed(evt);
             }
         });
 
-        jLabel3.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel3.setText("Date");
 
-        txtdate.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
         txtdate.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtdateActionPerformed(evt);
@@ -232,16 +326,9 @@ public class frmsales extends javax.swing.JFrame {
                 "Barcode", "Name", "Price", "Disc", "S Tax", "Qty", "Amount"
             }
         ) {
-            Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.Object.class, java.lang.Float.class, java.lang.Float.class, java.lang.Float.class, java.lang.Integer.class, java.lang.Integer.class
-            };
             boolean[] canEdit = new boolean [] {
                 false, false, false, false, false, false, false
             };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
@@ -259,100 +346,109 @@ public class frmsales extends javax.swing.JFrame {
             tblsales2.getColumnModel().getColumn(6).setResizable(false);
         }
 
-        txtamount.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
         txtamount.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtamountActionPerformed(evt);
             }
         });
+        txtamount.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtamountKeyPressed(evt);
+            }
+        });
 
-        txtprice.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
         txtprice.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtpriceActionPerformed(evt);
             }
         });
 
-        jLabel4.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
         jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel4.setText("Total Amount");
 
-        txtttlamount.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
         txtttlamount.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtttlamountActionPerformed(evt);
             }
         });
 
-        jLabel5.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
         jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel5.setText("Name");
 
-        txtname.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
         txtname.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtnameActionPerformed(evt);
             }
         });
 
-        jLabel6.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
         jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel6.setText("Received Amount");
 
-        txtreceivedamount.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
+        txtreceivedamount.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtreceivedamountFocusLost(evt);
+            }
+        });
         txtreceivedamount.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtreceivedamountActionPerformed(evt);
             }
         });
 
-        jLabel7.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
         jLabel7.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel7.setText("Change");
 
-        txtchange.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
         txtchange.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtchangeActionPerformed(evt);
             }
         });
 
-        txtproname.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
         txtproname.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtpronameActionPerformed(evt);
             }
         });
 
-        txtbarcode.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
+        txtbarcode.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtbarcodeFocusLost(evt);
+            }
+        });
         txtbarcode.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtbarcodeActionPerformed(evt);
             }
         });
+        txtbarcode.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtbarcodeKeyPressed(evt);
+            }
+        });
 
-        txtstax.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
         txtstax.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtstaxActionPerformed(evt);
             }
         });
 
-        txtqty.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
+        txtqty.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtqtyFocusLost(evt);
+            }
+        });
         txtqty.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtqtyActionPerformed(evt);
             }
         });
 
-        txtdisc.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
         txtdisc.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtdiscActionPerformed(evt);
             }
         });
 
-        btnprint.setBackground(new java.awt.Color(255, 255, 255));
         btnprint.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
         btnprint.setText("PRINT");
         btnprint.setContentAreaFilled(false);
@@ -489,7 +585,19 @@ public class frmsales extends javax.swing.JFrame {
     }//GEN-LAST:event_btnAddMouseExited
 
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
-        // TODO add your handling code here:
+        try {
+            String query = "insert/insert into tbl_sales1(sales_customer,sales_data,sales_ttlamount,sales_cashreceived) values ('" + txtname.getText() + "','" + txtdate.getText() + "'," + parseInt(txtttlamount.getText()) + "," + parseInt(txtreceivedamount.getText()) + ")";
+            System.out.println(query);
+            Connection(query);
+            for(int i=0;i<model.getRowCount();i++){
+            String query1 = "insert/insert into tbl_sales2(sales_Fkid,sales_Fkproduct,sales_price,sales_disc,sales_tax,sales_quantity) values ("+parseInt(txtno.getText())+",'" + model.getValueAt(i, 1).toString() + "',"+Double.parseDouble(model.getValueAt(i, 2).toString())+","+Double.parseDouble(model.getValueAt(i, 3).toString())+","+Double.parseDouble(model.getValueAt(i, 4).toString())+","+parseInt(model.getValueAt(i, 5).toString())+")";    
+                System.out.println(query1);
+                Connection(query1);
+            }
+            clearFields();
+        } catch (IOException ex) {
+            System.out.println("Doesnt execute the query");
+        }
     }//GEN-LAST:event_btnAddActionPerformed
 
     private void btndeleteMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btndeleteMouseEntered
@@ -503,7 +611,17 @@ public class frmsales extends javax.swing.JFrame {
     }//GEN-LAST:event_btndeleteMouseExited
 
     private void btndeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btndeleteActionPerformed
-        // TODO add your handling code here:
+       try {
+           String query1 = "delete/Delete from tbl_sales2 where sales_Fkid=" + parseInt(txtno.getText());
+            System.out.println(query1);
+            Connection(query1);
+            String query = "delete/Delete from tbl_sales1 where sales_id=" + parseInt(txtno.getText());
+            System.out.println(query);
+            Connection(query);
+            clearFields();
+        } catch (IOException ex) {
+            System.out.println("Doesnt execute the query");
+        }
     }//GEN-LAST:event_btndeleteActionPerformed
 
     private void btnresetMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnresetMouseEntered
@@ -517,7 +635,11 @@ public class frmsales extends javax.swing.JFrame {
     }//GEN-LAST:event_btnresetMouseExited
 
     private void btnresetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnresetActionPerformed
-        // TODO add your handling code here:
+        try {
+            clearFields();
+        } catch (IOException ex) {
+            Logger.getLogger(frmsales.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_btnresetActionPerformed
 
     private void btnupdateMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnupdateMouseEntered
@@ -531,7 +653,19 @@ public class frmsales extends javax.swing.JFrame {
     }//GEN-LAST:event_btnupdateMouseExited
 
     private void btnupdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnupdateActionPerformed
-        // TODO add your handling code here:
+        try {
+           String query = "update/Update tbl_sales1 set sales_data='"+txtdate.getText()+"',sales_customer='"+txtname.getText()+"',sales_ttlamount="+parseInt(txtttlamount.getText())+",sales_cashreceived="+parseInt(txtreceivedamount.getText())+" where sales_id="+parseInt(txtno.getText());
+            System.out.println(query);
+            Connection(query);
+            for(int i=0;i<model.getRowCount();i++){
+            String query1 = "update/update tbl_sales2 Set sales_Fkproduct='" + model.getValueAt(i, 1).toString() + "',sales_price=" + Double.parseDouble(model.getValueAt(i, 2).toString()) + ",sales_disc=" + Double.parseDouble(model.getValueAt(i, 3).toString()) + ",sales_tax=" + Double.parseDouble(model.getValueAt(i, 4).toString()) +",sales_quantity=" + parseInt(model.getValueAt(i, 5).toString())  + " where sales_Fkid="+parseInt(txtno.getText());    
+                System.out.println(query1);
+                Connection(query1);
+            }
+            clearFields();
+        } catch (IOException ex) {
+            System.out.println("Doesnt execute the query");
+        }
     }//GEN-LAST:event_btnupdateActionPerformed
 
     private void txtnoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtnoActionPerformed
@@ -600,6 +734,56 @@ public class frmsales extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_btnprintActionPerformed
 
+    private void txtamountKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtamountKeyPressed
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            String total="0";
+        model.insertRow(model.getRowCount(), new Object[]{txtbarcode.getText(), txtproname.getText(),txtprice.getText(),txtdisc.getText(),txtstax.getText(),txtqty.getText(),txtamount.getText()});
+        txtbarcode.setText("");
+    txtproname.setText("");
+    txtprice.setText("");
+    txtdisc.setText("");
+    txtstax.setText("");
+    txtqty.setText("");
+    txtamount.setText("");
+    txtbarcode.requestFocus();
+        for (int i = 0; i < model.getRowCount(); i++) {
+                int Amount = Integer.parseInt(model.getValueAt(i, 6) + "");
+                total = String.valueOf(Amount + Integer.parseInt(total));
+            }
+            txtttlamount.setText(total);
+        }
+    }//GEN-LAST:event_txtamountKeyPressed
+
+    private void txtreceivedamountFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtreceivedamountFocusLost
+        txtchange.setText(String.valueOf(parseInt(txtttlamount.getText())-parseInt(txtreceivedamount.getText())));
+    }//GEN-LAST:event_txtreceivedamountFocusLost
+
+    private void txtbarcodeFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtbarcodeFocusLost
+        
+    }//GEN-LAST:event_txtbarcodeFocusLost
+
+    private void txtqtyFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtqtyFocusLost
+        Double a=Double.parseDouble(txtprice.getText())+(Double.parseDouble(txtstax.getText())*Double.parseDouble(txtprice.getText())/100)-(Double.parseDouble(txtdisc.getText())*Double.parseDouble(txtprice.getText())/100);
+        String b=String.valueOf((int)(a*parseInt(txtqty.getText())));
+        txtamount.setText(b);
+    }//GEN-LAST:event_txtqtyFocusLost
+
+    private void txtbarcodeKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtbarcodeKeyPressed
+if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+        try {
+            String a="salesbarcode/"+txtbarcode.getText();
+            Connection(a);
+            String data[] = s.split(",");
+            txtproname.setText(data[0]);
+            txtprice.setText(data[1]);
+            txtdisc.setText(data[2]);
+            txtstax.setText(data[3]);
+        } catch (IOException ex) {
+            Logger.getLogger(frmpurchase.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    }//GEN-LAST:event_txtbarcodeKeyPressed
+
     /**
      * @param args the command line arguments
      */
@@ -631,7 +815,11 @@ public class frmsales extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new frmsales().setVisible(true);
+                try {
+                    new frmsales().setVisible(true);
+                } catch (IOException ex) {
+                    Logger.getLogger(frmsales.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
     }
